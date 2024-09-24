@@ -1,28 +1,27 @@
-#include "options.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "cli/cli.h"
+#include "cli/options.h"
 
-INIT_OPTIONS(cli_options,
-  "bf2c",
-  "A Brainf*ck to C transpiler",
-  OPTION("input",
-    "i",
-    "FILE",
-    "\tInput file. Uses stdin, if not provided.",
-    STRING,
-    NULL),
-  OPTION("output",
-    "o",
-    "FILE",
-    "\tOutput file. Uses stdout, if not provided.",
-    STRING,
-    NULL),
-  FLAG("verbose", "v", "\t\tVerbose output"),
-  FLAG("dynamic-memory", "d", "\tUse dynamic memory allocation"),
-  FLAG("help", "h", "\t\tPrint this help message"),
-  FLAG("version", NULL, "\t\tPrint version"), );
+CLI_SETUP_OPTIONS(
+    "bf2c",
+    "A Brainf*ck to C transpiler",
+    CLI_OPTION("input", 'i', "FILE", STRING, NULL, "\tInput file. Uses stdin, if not provided."),
+    CLI_OPTION("output", 'o', "FILE", STRING, NULL, "\tOutput file. Uses stdout, if not provided."),
+    CLI_FLAG("verbose", 'v', "\t\tVerbose output"),
+    CLI_FLAG("dynamic-memory", 'd', "\tUse dynamic memory allocation"),
+    CLI_FLAG("help", 'h', "\t\tPrint this help message"),
+    CLI_FLAG("version", 0, "\t\tPrint version"), )
 
-int main(void)
+int main(int argc, char* argv[])
 {
-  // TODO: implement parse_args function
-  print_usage(&cli_options);
-  return 0;
+    CLI_INIT_OPTIONS(cli);
+    // TODO: implement parse_args function
+    if (!cli_parse_args(cli, argc, argv))
+    {
+        cli_print_usage(cli);
+        exit(EXIT_FAILURE);
+    }
+    printf("Input specified: %s\n", cli->options[0].given_value.STRING_value);
+    return 0;
 }
