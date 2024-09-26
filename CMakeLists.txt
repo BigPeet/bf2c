@@ -7,11 +7,6 @@ include(GNUInstallDirs)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE "Debug")
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  message(STATUS "Building with debug output.")
-  add_definitions(-DDEBUG)
-endif()
-
 include(cmake/PreventInSourceBuilds.cmake)
 
 # Add interface library for compiler warnings

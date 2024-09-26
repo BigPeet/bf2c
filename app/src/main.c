@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "cli/cli.h"
 #include "cli/options.h"
+#include "core/util/logging.h"
 
 CLI_SETUP_OPTIONS(
     "bf2c",
@@ -15,6 +16,7 @@ CLI_SETUP_OPTIONS(
 
 int main(int argc, char* argv[])
 {
+    LOGGING_INIT(LOGLEVEL_DEBUG);
     CLI_INIT_OPTIONS(cli);
     // TODO: implement parse_args function
     if (!cli_parse_args(cli, argc, argv))

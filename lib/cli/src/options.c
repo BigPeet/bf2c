@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "logging/logging.h"
+#include "core/util/logging.h"
 
 
 void cli_option_print(cli_option_t const* option)
