@@ -1,5 +1,6 @@
-#include "core/result/result.h"
-#include "core/util/logging.h"
+#include "core/result.h"
+#include "core/abort.h"
+#include "core/logging.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -7,14 +8,6 @@
 #include <stdlib.h>
 
 // example to test API
-
-#define RESULT_ABORT() abort()
-#define RESULT_LOG_AND_ABORT(msg) \
-    do                            \
-    {                             \
-        LOG_ERROR_MSG((msg));     \
-        RESULT_ABORT();           \
-    } while (0)
 
 typedef struct test_result_t
 {
@@ -70,10 +63,7 @@ int* test_result_get_error(test_result_t* result)
 double test_result_unwrap(test_result_t const* result)
 {
     assert(result);
-    if (!result->has_value)
-    {
-        RESULT_ABORT();
-    }
+    ABORT_IF(!result->has_value);
     return result->content.value;
 }
 
@@ -104,20 +94,14 @@ double test_result_unwrap_or_else(test_result_t const* result, double (*default_
 double test_result_expect(test_result_t const* result, char const* message)
 {
     assert(result);
-    if (!result->has_value)
-    {
-        RESULT_LOG_AND_ABORT(message);
-    }
+    LOG_AND_ABORT_IF(!result->has_value, message);
     return result->content.value;
 }
 
 int test_result_unwrap_err(test_result_t const* result)
 {
     assert(result);
-    if (result->has_value)
-    {
-        RESULT_ABORT();
-    }
+    ABORT_IF(result->has_value);
     return result->content.error;
 }
 
@@ -148,28 +132,17 @@ int test_result_unwrap_err_or_else(test_result_t const* result, int (*default_fn
 int test_result_expect_err(test_result_t const* result, char const* message)
 {
     assert(result);
-    if (result->has_value)
-    {
-        RESULT_LOG_AND_ABORT(message);
-    }
+    LOG_AND_ABORT_IF(result->has_value, message);
     return result->content.error;
 }
 
-#undef RESULT_LOG_AND_ABORT
-#undef RESULT_ABORT
-
 int main(int argc, char* argv[])
 {
+    LOGGING_INIT(LOGLEVEL_INFO);
     test_result_t res = test_result_create_from_error(2);
     /*test_result_t res = test_result_create_from_value(42.0);*/
-    double* val       = test_result_get_value(&res);
-    if (val)
-    {
-        LOG_INFO("Value: %f\n", *val);
-    }
-    else
-    {
-        LOG_ERROR_MSG("No value\n");
-    }
+    double val = test_result_unwrap(&res);
+    /*double val = test_result_expect(&res, "There was no value");*/
+    /*double* val = test_result_get_value(&res);*/
     return 0;
 }

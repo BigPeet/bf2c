@@ -1,4 +1,4 @@
-#include "core/util/logging.h"
+#include "core/logging.h"
 
 static core_logging_level_t glevel = LOGLEVEL_DEBUG;
 

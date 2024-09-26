@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "cli/cli.h"
 #include "cli/option.h"
-#include "core/util/logging.h"
+#include "core/logging.h"
 
 CLI_SETUP_OPTIONS(
     "bf2c",
