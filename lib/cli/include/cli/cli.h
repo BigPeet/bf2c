@@ -6,8 +6,16 @@
 
 // cli_t: Struct and functions
 
+typedef struct cli_version_t
+{
+    int major;
+    int minor;
+    int patch;
+} cli_version_t;
+
 typedef struct cli_t
 {
+    cli_version_t version;
     size_t count;
     char const* program_name;
     char const* program_description;
@@ -15,6 +23,7 @@ typedef struct cli_t
 } cli_t;
 
 void cli_print_usage(cli_t const* cli);
+void cli_print_version(cli_t const* cli);
 bool cli_parse_args(cli_t const* cli, int argc, char** argv);
 
 
@@ -31,18 +40,19 @@ bool cli_parse_args(cli_t const* cli, int argc, char** argv);
 
 #define CLI_FLAG(name, short_form, desc) CLI_OPTION(name, short_form, NULL, BOOL, false, desc)
 
-#define CLI_SETUP_OPTIONS(name, desc, ...)                                                              \
+#define CLI_SETUP(name, major, minor, patch, desc, ...)                                                 \
     static cli_t* cli_options_setup_global_gen(void)                                                    \
     {                                                                                                   \
         static cli_option_t options[] = {__VA_ARGS__};                                                  \
         static cli_t cli              = {.program_name        = (name),                                 \
                                          .program_description = (desc),                                 \
+                                         .version             = {(major), (minor), (patch)},            \
                                          .count               = sizeof(options) / sizeof(cli_option_t), \
                                          .options             = options};                                           \
         return &cli;                                                                                    \
     }
 
-#define CLI_INIT_OPTIONS(var_name) cli_t const* var_name = cli_options_setup_global_gen()
+#define CLI_INIT(var_name) cli_t const* var_name = cli_options_setup_global_gen()
 
 
 #endif /* ifndef CLI_CLI_H_ */

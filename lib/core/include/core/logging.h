@@ -32,11 +32,11 @@
 // log levels
 typedef enum core_logging_level_t
 {
-    LOGLEVEL_FATAL = 0,
-    LOGLEVEL_ERROR,
-    LOGLEVEL_WARN,
-    LOGLEVEL_INFO,
-    LOGLEVEL_DEBUG,
+    LOG_LEVEL_FATAL = 0,
+    LOG_LEVEL_ERROR,
+    LOG_LEVEL_WARN,
+    LOG_LEVEL_INFO,
+    LOG_LEVEL_DEBUG,
 } core_logging_level_t;
 
 core_logging_level_t core_logging_get_level(void);
@@ -46,17 +46,17 @@ void core_logging_set_level(core_logging_level_t level);
 
 #define LOGGING_INIT(level) core_logging_set_level(level)
 
-#define LOG_DEBUG(fmt, ...)                                              \
-    do                                                                   \
-    {                                                                    \
-        if (CORE_LOGGING_ENABLED)                                   \
-            LOGGING_INTERNAL(LOGLEVEL_DEBUG, "DEBUG", fmt, __VA_ARGS__); \
+#define LOG_DEBUG(fmt, ...)                                               \
+    do                                                                    \
+    {                                                                     \
+        if (CORE_LOGGING_ENABLED)                                         \
+            LOGGING_INTERNAL(LOG_LEVEL_DEBUG, "DEBUG", fmt, __VA_ARGS__); \
     } while (0)
 
-#define LOG_INFO(fmt, ...) LOGGING_INTERNAL(LOGLEVEL_INFO, " INFO", fmt, __VA_ARGS__)
-#define LOG_WARN(fmt, ...) LOGGING_INTERNAL(LOGLEVEL_WARN, " WARN", fmt, __VA_ARGS__)
-#define LOG_ERROR(fmt, ...) LOGGING_INTERNAL(LOGLEVEL_ERROR, "ERROR", fmt, __VA_ARGS__)
-#define LOG_FATAL(fmt, ...) LOGGING_INTERNAL(LOGLEVEL_FATAL, "FATAL", fmt, __VA_ARGS__)
+#define LOG_INFO(fmt, ...) LOGGING_INTERNAL(LOG_LEVEL_INFO, " INFO", fmt, __VA_ARGS__)
+#define LOG_WARN(fmt, ...) LOGGING_INTERNAL(LOG_LEVEL_WARN, " WARN", fmt, __VA_ARGS__)
+#define LOG_ERROR(fmt, ...) LOGGING_INTERNAL(LOG_LEVEL_ERROR, "ERROR", fmt, __VA_ARGS__)
+#define LOG_FATAL(fmt, ...) LOGGING_INTERNAL(LOG_LEVEL_FATAL, "FATAL", fmt, __VA_ARGS__)
 
 #define LOG_DEBUG_MSG(msg) LOG_DEBUG("%s", (msg))
 #define LOG_INFO_MSG(msg) LOG_INFO("%s", (msg))

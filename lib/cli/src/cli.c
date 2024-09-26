@@ -3,7 +3,26 @@
 #include <assert.h>
 #include <stdio.h>
 #include "cli/option.h"
+#include "core/abort.h"
 
+static void cli_version_print(cli_version_t const* version)
+{
+    assert(version);
+    printf("%d.%d.%d", version->major, version->minor, version->patch);
+}
+
+/*static char* cli_version_to_string(cli_version_t const* version)*/
+/*{*/
+/*assert(version);*/
+/*char* buffer = malloc(32 * sizeof(char));*/
+/*(void) snprintf(buffer,*/
+/*32 * sizeof(char),*/
+/*"%d.%d.%d",*/
+/*version->major,*/
+/*version->minor,*/
+/*version->patch);*/
+/*return buffer;*/
+/*}*/
 
 void cli_print_usage(cli_t const* cli)
 {
@@ -13,6 +32,14 @@ void cli_print_usage(cli_t const* cli)
     {
         cli_option_print(&cli->options[i]);
     }
+}
+
+void cli_print_version(cli_t const* cli)
+{
+    ABORT_IF(!cli);
+    printf("%s ", cli->program_name);
+    cli_version_print(&cli->version);
+    printf("\n");
 }
 
 static bool cli_parse_long_option(
