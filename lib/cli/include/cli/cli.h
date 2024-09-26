@@ -2,7 +2,7 @@
 #define CLI_CLI_H_
 
 #include <stddef.h>
-#include "cli/options.h"
+#include "cli/option.h"
 
 // cli_t: Struct and functions
 

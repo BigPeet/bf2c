@@ -1,5 +1,5 @@
-#ifndef CLI_OPTIONS_H_
-#define CLI_OPTIONS_H_
+#ifndef CLI_OPTION_H_
+#define CLI_OPTION_H_
 
 #include <stdbool.h>
 
@@ -39,4 +39,4 @@ void cli_option_enable_flag(cli_option_t* option);
 bool cli_option_set_value(cli_option_t* option, char const* parameter);
 
 
-#endif /* ifndef CLI_OPTIONS_H_ */
+#endif /* ifndef CLI_OPTION_H_ */

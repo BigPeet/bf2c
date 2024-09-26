@@ -2,7 +2,7 @@
 
 #include <assert.h>
 #include <stdio.h>
-#include "cli/options.h"
+#include "cli/option.h"
 
 
 void cli_print_usage(cli_t const* cli)

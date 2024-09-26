@@ -1,4 +1,4 @@
-#include "cli/options.h"
+#include "cli/option.h"
 #include <assert.h>
 #include <errno.h>
 #include <limits.h>

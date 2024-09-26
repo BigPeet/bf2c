@@ -1,4 +1,4 @@
-set(CLI_SOURCE_FILES src/cli.c src/options.c
+set(CLI_SOURCE_FILES src/cli.c src/option.c
   )
 add_library(cli STATIC ${CLI_SOURCE_FILES})
 

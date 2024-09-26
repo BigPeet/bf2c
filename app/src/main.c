@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "cli/cli.h"
-#include "cli/options.h"
+#include "cli/option.h"
 #include "core/util/logging.h"
 
 CLI_SETUP_OPTIONS(
