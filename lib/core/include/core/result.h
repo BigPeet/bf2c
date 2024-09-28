@@ -31,6 +31,7 @@
     value_type type_name##_unwrap_or_handle(type_name const* result,                         \
                                             value_type* out,                                 \
                                             void (*handler)(error_type));                    \
+    bool type_name##_try_unwrap(type_name const* result, value_type* out);                   \
     value_type type_name##_expect(type_name const* result, char const* message);             \
                                                                                              \
     error_type const* type_name##_get_error(type_name const* result);                        \
@@ -43,6 +44,7 @@
     value_type type_name##_unwrap_err_or_handle(type_name const* result,                     \
                                                 error_type* out,                             \
                                                 void (*handler)(value_type));                \
+    bool type_name##_try_unwrap_err(type_name const* result, error_type* out);               \
     error_type type_name##_expect_err(type_name const* result, char const* message);
 
 
@@ -123,6 +125,15 @@
         }                                                                                          \
         return result->has_value;                                                                  \
     }                                                                                              \
+    bool type_name##_try_unwrap(type_name const* result, value_type* out)                          \
+    {                                                                                              \
+        ABORT_IF(!result || !out);                                                                 \
+        if (result->has_value)                                                                     \
+        {                                                                                          \
+            *out = result->storage.value;                                                          \
+        }                                                                                          \
+        return result->has_value;                                                                  \
+    }                                                                                              \
     value_type type_name##_expect(type_name const* result, char const* message)                    \
     {                                                                                              \
         ABORT_IF(!result);                                                                         \
@@ -178,6 +189,15 @@
         else                                                                                       \
         {                                                                                          \
             handler(result->storage.value);                                                        \
+        }                                                                                          \
+        return !result->has_value;                                                                 \
+    }                                                                                              \
+    bool type_name##_try_unwrap_err(type_name const* result, error_type* out)                      \
+    {                                                                                              \
+        ABORT_IF(!result || !out);                                                                 \
+        if (!result->has_value)                                                                    \
+        {                                                                                          \
+            *out = result->storage.error;                                                          \
         }                                                                                          \
         return !result->has_value;                                                                 \
     }                                                                                              \
