@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 #include "cli/option.h"
+#include "cli/error_codes.h"
+#include "core/result.h"
 
 // cli_t: Struct and functions
 
@@ -22,9 +24,11 @@ typedef struct cli_t
     struct cli_option_t* options;
 } cli_t;
 
+RESULT_VOID_DECLARE(cli_parse_result_t, cli_error_t)
+
 void cli_print_usage(cli_t const* cli);
 void cli_print_version(cli_t const* cli);
-bool cli_parse_args(cli_t const* cli, int argc, char** argv);
+cli_parse_result_t cli_parse_args(cli_t const* cli, int argc, char** argv);
 
 
 // User MACROS for setup and initialization

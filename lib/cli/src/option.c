@@ -28,14 +28,14 @@ void cli_option_print(cli_option_t const* option)
     printf(" %s\n", option->description);
 }
 
-bool cli_option_has_long_name(cli_option_t const* option, char const* name)
+bool cli_option_same_long_name(cli_option_t const* option, char const* name)
 {
     assert(option);
     assert(name);
     return option->long_name && strcmp(option->long_name, name) == 0;
 }
 
-bool cli_option_has_short_name(cli_option_t const* option, char name)
+bool cli_option_same_short_name(cli_option_t const* option, char name)
 {
     assert(option);
     assert(name);

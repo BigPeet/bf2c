@@ -33,8 +33,8 @@ typedef struct cli_option_t
 } cli_option_t;
 
 void cli_option_print(cli_option_t const* option);
-bool cli_option_has_long_name(cli_option_t const* option, char const* name);
-bool cli_option_has_short_name(cli_option_t const* option, char name);
+bool cli_option_same_long_name(cli_option_t const* option, char const* name);
+bool cli_option_same_short_name(cli_option_t const* option, char name);
 void cli_option_enable_flag(cli_option_t* option);
 bool cli_option_set_value(cli_option_t* option, char const* parameter);
 
