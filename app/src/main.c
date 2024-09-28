@@ -9,7 +9,7 @@ CLI_SETUP(
     0,
     1,
     0,
-    "A Brainf*ck to C transpiler",
+    "A Brainfuck to C transpiler",
     CLI_OPTION("input", 'i', "FILE", STRING, NULL, "\tInput file. Uses stdin, if not provided."),
     CLI_OPTION("output", 'o', "FILE", STRING, NULL, "\tOutput file. Uses stdout, if not provided."),
     CLI_FLAG("verbose", 'v', "\t\tVerbose mode"),

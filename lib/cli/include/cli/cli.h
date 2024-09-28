@@ -28,7 +28,6 @@ bool cli_parse_args(cli_t const* cli, int argc, char** argv);
 
 
 // User MACROS for setup and initialization
-
 #define CLI_OPTION(name, short_form, param, type, default_val, desc)             \
     {                                                                            \
         .long_name = (name), .short_name = (short_form), .parameter = (param),   \

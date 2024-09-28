@@ -1,3 +1,3 @@
 # bf2c
 
-A Brainf*ck to C transpiler
+A Brainfuck to C transpiler (WIP)
