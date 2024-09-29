@@ -17,9 +17,10 @@ CLI_SETUP(
     CLI_OPTION("output", 'o', "FILE", STRING, NULL, "\tOutput file. Uses stdout, if not provided."),
     CLI_FLAG("verbose", 'v', "\t\tVerbose mode"),
     CLI_FLAG("quiet", 'q', "\t\tQuiet mode"),
-    CLI_FLAG("dynamic-memory", 'd', "\tUse dynamic memory allocation"),
-    CLI_FLAG("help", 'h', "\t\tPrint this help message"),
-    CLI_FLAG("version", 0, "\t\tPrint version"), )
+    CLI_FLAG("dynamic-memory", 'd', "\tUse dynamic memory allocation."),
+    CLI_FLAG("interpret", 0, "\tInterpret instead of transpiling."),
+    CLI_FLAG("help", 'h', "\t\tPrint this help message."),
+    CLI_FLAG("version", 0, "\t\tPrint version."), )
 
 int main(int argc, char* argv[])
 {
