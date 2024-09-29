@@ -4,6 +4,7 @@
 #include "cli/cli.h"
 #include "cli/error_codes.h"
 #include "cli/option.h"
+#include "cli/result.h"
 #include "core/logging.h"
 
 CLI_SETUP(
@@ -27,10 +28,10 @@ int main(int argc, char* argv[])
 
     { // scoped to minimize lifetime of variables
         // TODO: implement parse_args function
-        cli_parse_result_t res = cli_parse_args(cli, argc, argv);
-        if (!cli_parse_result_t_has_value(&res)) // !res.has_value
+        cli_result_t res = cli_parse_args(cli, argc, argv);
+        if (!cli_result_t_has_value(&res)) // !res.has_value
         {
-            cli_error_t err = cli_parse_result_t_unwrap_err(&res);
+            cli_error_t err = cli_result_t_unwrap_err(&res);
             cli_print_error(err); // res.storage.error (unchecked)
             cli_print_usage(cli);
             exit((int) err);

@@ -4,10 +4,8 @@
 #include <stdio.h>
 #include "cli/error_codes.h"
 #include "cli/option.h"
+#include "cli/result.h"
 #include "core/abort.h"
-#include "core/result.h"
-
-RESULT_VOID_DEFINE(cli_parse_result_t, cli_error_t)
 
 static void cli_version_print(cli_version_t const* version)
 {
@@ -46,7 +44,7 @@ void cli_print_version(cli_t const* cli)
     printf("\n");
 }
 
-cli_parse_result_t cli_parse_long_option(
+cli_result_t cli_parse_long_option(
     cli_t const* cli, char const* argument, int* index, int argc, char** argv)
 {
     assert(cli);
@@ -60,25 +58,25 @@ cli_parse_result_t cli_parse_long_option(
             {
                 // no parameter, so treat this as a flag
                 cli_option_enable_flag(&cli->options[j]);
-                return cli_parse_result_t_create_from_value();
+                return cli_result_t_create_from_value();
             }
 
             if (*index >= argc - 1)
             {
                 // There is no further user provided parameter
-                return cli_parse_result_t_create_from_error(CLI_ERROR_MISSING_PARAMETER);
+                return cli_result_t_create_from_error(CLI_ERROR_MISSING_PARAMETER);
             }
 
             *index += 1;
             return cli_option_set_value(&cli->options[j], argv[*index])
-                       ? cli_parse_result_t_create_from_value()
-                       : cli_parse_result_t_create_from_error(CLI_ERROR_INVALID_PARAMETER);
+                       ? cli_result_t_create_from_value()
+                       : cli_result_t_create_from_error(CLI_ERROR_INVALID_PARAMETER);
         }
     }
-    return cli_parse_result_t_create_from_error(CLI_ERROR_UNKNOWN_OPTION);
+    return cli_result_t_create_from_error(CLI_ERROR_UNKNOWN_OPTION);
 }
 
-cli_parse_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
+cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
 {
     // assuming argc and argv are passed from main.
     // no checking applied
@@ -89,7 +87,7 @@ cli_parse_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
         char* arg = argv[i];
         if (arg[0] == '-' && arg[1] == '-')
         {
-            cli_parse_result_t res = cli_parse_long_option(cli, arg + 2, &i, argc, argv);
+            cli_result_t res = cli_parse_long_option(cli, arg + 2, &i, argc, argv);
             if (!res.has_value)
             {
                 return res;
@@ -114,5 +112,5 @@ cli_parse_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
             assert(false && "Positional arguments not supported yet");
         }
     }
-    return cli_parse_result_t_create_from_value();
+    return cli_result_t_create_from_value();
 }
