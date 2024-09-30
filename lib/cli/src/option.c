@@ -60,11 +60,13 @@ static bool parse_int_from_str(int* value, char const* str)
 {
     assert(value);
     assert(str);
-    errno                  = 0;
-    const long val         = strtol(str, NULL, 0); // auto-detect base
-    const bool range_error = (val == LONG_MIN || val == LONG_MAX) && errno == ERANGE;
-    *value                 = (int) val;
-    return !range_error;
+    char* end                = NULL;
+    errno                    = 0;
+    const long val           = strtol(str, &end, 0); // auto-detect base
+    const bool range_error   = (val == LONG_MIN || val == LONG_MAX) && errno == ERANGE;
+    const bool no_conversion = val == 0 && str == end;
+    *value                   = (int) val;
+    return !range_error && !no_conversion;
 }
 
 
@@ -72,11 +74,13 @@ static bool parse_double_from_str(double* value, char const* str)
 {
     assert(value);
     assert(str);
-    errno                  = 0;
-    const double val       = strtod(str, NULL); // auto-detect base
-    const bool range_error = val == HUGE_VAL && errno == ERANGE;
-    *value                 = val;
-    return !range_error;
+    char* end                = NULL;
+    errno                    = 0;
+    const double val         = strtod(str, &end); // auto-detect base
+    const bool range_error   = val == HUGE_VAL && errno == ERANGE;
+    const bool no_conversion = val == 0.0 && str == end;
+    *value                   = val;
+    return !range_error && !no_conversion;
 }
 
 
@@ -104,6 +108,7 @@ cli_result_t cli_option_set_value(cli_option_t* option, char const* parameter)
 {
     ABORT_IF(!option || !parameter);
     LOG_DEBUG("Setting value for option '%s' to '%s'\n", option->long_name, parameter);
+    cli_result_t res = cli_result_t_create_from_value();
     switch (option->value_type)
     {
         case STRING:
@@ -113,21 +118,21 @@ cli_result_t cli_option_set_value(cli_option_t* option, char const* parameter)
             // try_unwrap
             if (!parse_int_from_str(&option->given_value.INT_value, parameter))
             {
-                return cli_result_t_create_from_error(CLI_ERROR_INVALID_OPTION_TYPE);
+                cli_result_t_set_error(&res, CLI_ERROR_INVALID_OPTION_TYPE);
             }
             break;
         case DOUBLE:
             if (!parse_double_from_str(&option->given_value.DOUBLE_value, parameter))
             {
-                return cli_result_t_create_from_error(CLI_ERROR_INVALID_OPTION_TYPE);
+                cli_result_t_set_error(&res, CLI_ERROR_INVALID_OPTION_TYPE);
             }
             break;
         case BOOL:
             if (!parse_bool_from_str(&option->given_value.BOOL_value, parameter))
             {
-                return cli_result_t_create_from_error(CLI_ERROR_INVALID_OPTION_TYPE);
+                cli_result_t_set_error(&res, CLI_ERROR_INVALID_OPTION_TYPE);
             }
             break;
     }
-    return cli_result_t_create_from_value();
+    return res;
 }

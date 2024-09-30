@@ -94,7 +94,7 @@ cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
             int const offset       = is_long_opt ? 2 : 1;
             bool (*cmp_func)(cli_option_t const*, char const*) =
                 is_long_opt ? cli_option_same_long_name : cli_option_same_short_name;
-            cli_result_t res = cli_parse_option(cli, arg + offset, cmp_func, &i, argc, argv);
+            cli_result_t const res = cli_parse_option(cli, arg + offset, cmp_func, &i, argc, argv);
             if (!res.has_value)
             {
                 return res;
@@ -103,7 +103,7 @@ cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
         else
         {
             // TODO: positional arguments
-            LOG_AND_ABORT("Positional arguments not supported yet!");
+            LOG_AND_ABORT("Positional arguments not imlemented yet!");
         }
     }
     // All arguments parsed successfully
