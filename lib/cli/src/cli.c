@@ -72,9 +72,7 @@ static cli_result_t cli_parse_option(cli_t const* cli,
             }
 
             *index += 1;
-            return cli_option_set_value(&cli->options[j], argv[*index])
-                       ? cli_result_t_create_from_value()
-                       : cli_result_t_create_from_error(CLI_ERROR_INVALID_PARAMETER);
+            return cli_option_set_value(&cli->options[j], argv[*index]);
         }
     }
     return cli_result_t_create_from_error(CLI_ERROR_UNKNOWN_OPTION);

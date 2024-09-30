@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "cli/error_codes.h"
 #include "cli/result.h"
 #include "core/abort.h"
 #include "core/logging.h"
@@ -107,14 +108,26 @@ cli_result_t cli_option_set_value(cli_option_t* option, char const* parameter)
     {
         case STRING:
             option->given_value.STRING_value = parameter;
-            return true;
+            break;
         case INT:
             // try_unwrap
-            return parse_int_from_str(&option->given_value.INT_value, parameter);
+            if (!parse_int_from_str(&option->given_value.INT_value, parameter))
+            {
+                return cli_result_t_create_from_error(CLI_ERROR_INVALID_OPTION_TYPE);
+            }
+            break;
         case DOUBLE:
-            return parse_double_from_str(&option->given_value.DOUBLE_value, parameter);
+            if (!parse_double_from_str(&option->given_value.DOUBLE_value, parameter))
+            {
+                return cli_result_t_create_from_error(CLI_ERROR_INVALID_OPTION_TYPE);
+            }
+            break;
         case BOOL:
-            return parse_bool_from_str(&option->given_value.BOOL_value, parameter);
+            if (!parse_bool_from_str(&option->given_value.BOOL_value, parameter))
+            {
+                return cli_result_t_create_from_error(CLI_ERROR_INVALID_OPTION_TYPE);
+            }
+            break;
     }
-    return false;
+    return cli_result_t_create_from_value();
 }
