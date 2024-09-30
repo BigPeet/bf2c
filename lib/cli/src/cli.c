@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 #include "cli/error_codes.h"
 #include "cli/option.h"
 #include "cli/result.h"
@@ -44,21 +45,24 @@ void cli_print_version(cli_t const* cli)
     printf("\n");
 }
 
-cli_result_t cli_parse_long_option(
-    cli_t const* cli, char const* argument, int* index, int argc, char** argv)
+static cli_result_t cli_parse_option(cli_t const* cli,
+                                     char const* argument,
+                                     bool (*cmp_func)(cli_option_t const*, char const*),
+                                     int* index,
+                                     int argc,
+                                     char** argv)
 {
     assert(cli);
     assert(argument);
     assert(index);
     for (size_t j = 0; j < cli->count; ++j)
     {
-        if (cli_option_same_long_name(&cli->options[j], argument))
+        if (cmp_func(&cli->options[j], argument))
         {
             if (!cli->options[j].parameter)
             {
                 // no parameter, so treat this as a flag
-                cli_option_enable_flag(&cli->options[j]);
-                return cli_result_t_create_from_value();
+                return cli_option_enable_flag(&cli->options[j]);
             }
 
             if (*index >= argc - 1)
@@ -80,37 +84,30 @@ cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
 {
     // assuming argc and argv are passed from main.
     // no checking applied
-    assert(cli);
+    ABORT_IF(!cli);
 
     for (int i = 1; i < argc; ++i)
     {
         char* arg = argv[i];
-        if (arg[0] == '-' && arg[1] == '-')
+        if (strlen(arg) >= 2 && arg[0] == '-')
         {
-            cli_result_t res = cli_parse_long_option(cli, arg + 2, &i, argc, argv);
+            // Parsing an option
+            bool const is_long_opt = arg[1] == '-';
+            int const offset       = is_long_opt ? 2 : 1;
+            bool (*cmp_func)(cli_option_t const*, char const*) =
+                is_long_opt ? cli_option_same_long_name : cli_option_same_short_name;
+            cli_result_t res = cli_parse_option(cli, arg + offset, cmp_func, &i, argc, argv);
             if (!res.has_value)
             {
                 return res;
             }
         }
-        else if (arg[0] == '-')
-        {
-            // Short option
-            /*char* option = arg + 1;*/
-            /*for (size_t j = 0; j < cli->count; ++j)*/
-            /*{*/
-            /*if (strcmp(&cli->options[j].short_name, option) == 0)*/
-            /*{*/
-            /*cli->options[j].given_value.bool_value = true;*/
-            /*break;*/
-            /*}*/
-            /*}*/
-        }
         else
         {
             // TODO: positional arguments
-            assert(false && "Positional arguments not supported yet");
+            LOG_AND_ABORT("Positional arguments not supported yet!");
         }
     }
+    // All arguments parsed successfully
     return cli_result_t_create_from_value();
 }

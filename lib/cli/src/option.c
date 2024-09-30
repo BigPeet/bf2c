@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "cli/result.h"
+#include "core/abort.h"
 #include "core/logging.h"
 
 
@@ -35,19 +37,22 @@ bool cli_option_same_long_name(cli_option_t const* option, char const* name)
     return option->long_name && strcmp(option->long_name, name) == 0;
 }
 
-bool cli_option_same_short_name(cli_option_t const* option, char name)
+bool cli_option_same_short_name(cli_option_t const* option, char const* name)
 {
     assert(option);
     assert(name);
-    return option->short_name && option->short_name == name;
+    return option->short_name && option->short_name == *name;
 }
 
-void cli_option_enable_flag(cli_option_t* option)
+cli_result_t cli_option_enable_flag(cli_option_t* option)
 {
-    assert(option->value_type == BOOL);
-    // set the tag anyway...to avoid potential issues down the line
-    option->value_type             = BOOL;
+    ABORT_IF(!option);
+    if (option->value_type != BOOL)
+    {
+        return cli_result_t_create_from_error(CLI_ERROR_INVALID_OPTION_TYPE);
+    }
     option->given_value.BOOL_value = true;
+    return cli_result_t_create_from_value();
 }
 
 static bool parse_int_from_str(int* value, char const* str)
@@ -92,11 +97,11 @@ static bool parse_bool_from_str(bool* value, char const* str)
 }
 
 
-bool cli_option_set_value(cli_option_t* option, char const* parameter)
+// TODO: return result...cli_parse_result_t? same error codes as cli_parse_result_t?
+//       Add common place for some common result definitions.
+cli_result_t cli_option_set_value(cli_option_t* option, char const* parameter)
 {
-    assert(option);
-    assert(parameter);
-
+    ABORT_IF(!option || !parameter);
     LOG_DEBUG("Setting value for option '%s' to '%s'\n", option->long_name, parameter);
     switch (option->value_type)
     {
@@ -104,6 +109,7 @@ bool cli_option_set_value(cli_option_t* option, char const* parameter)
             option->given_value.STRING_value = parameter;
             return true;
         case INT:
+            // try_unwrap
             return parse_int_from_str(&option->given_value.INT_value, parameter);
         case DOUBLE:
             return parse_double_from_str(&option->given_value.DOUBLE_value, parameter);
