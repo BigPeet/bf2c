@@ -40,6 +40,12 @@ cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv);
 
 #define CLI_FLAG(name, short_form, desc) CLI_OPTION(name, short_form, NULL, BOOL, false, desc)
 
+#define COMMON_OPTIONS()                                                                    \
+    CLI_FLAG("verbose", 'v', "\t\tVerbose mode"), CLI_FLAG("quiet", 'q', "\t\tQuiet mode"), \
+        CLI_FLAG("help", 'h', "\t\tPrint this help message."),                              \
+        CLI_FLAG("version", 'V', "\t\tPrint version.")
+
+
 #define CLI_SETUP(name, major, minor, patch, desc, ...)                                                 \
     static cli_t* cli_options_setup_global_gen(void)                                                    \
     {                                                                                                   \

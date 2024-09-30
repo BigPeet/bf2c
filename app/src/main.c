@@ -15,12 +15,9 @@ CLI_SETUP(
     "A Brainfuck to C transpiler",
     CLI_OPTION("input", 'i', "FILE", STRING, NULL, "\tInput file. Uses stdin, if not provided."),
     CLI_OPTION("output", 'o', "FILE", STRING, NULL, "\tOutput file. Uses stdout, if not provided."),
-    CLI_FLAG("verbose", 'v', "\t\tVerbose mode"),
-    CLI_FLAG("quiet", 'q', "\t\tQuiet mode"),
     CLI_FLAG("dynamic-memory", 'd', "\tUse dynamic memory allocation."),
     CLI_FLAG("interpret", 0, "\tInterpret instead of transpiling."),
-    CLI_FLAG("help", 'h', "\t\tPrint this help message."),
-    CLI_FLAG("version", 0, "\t\tPrint version."), )
+    COMMON_OPTIONS())
 
 int main(int argc, char* argv[])
 {
@@ -39,12 +36,12 @@ int main(int argc, char* argv[])
         }
     }
     // TODO: implement better accessor functions
-    if (cli->options[5].given_value.BOOL_value)
+    if (cli->options[6].given_value.BOOL_value)
     {
         cli_print_usage(cli);
         exit(EXIT_SUCCESS);
     }
-    if (cli->options[6].given_value.BOOL_value)
+    if (cli->options[7].given_value.BOOL_value)
     {
         cli_print_version(cli);
         exit(EXIT_SUCCESS);
