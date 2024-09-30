@@ -30,9 +30,9 @@ int main(int argc, char* argv[])
         if (!cli_result_t_has_value(&res)) // !res.has_value
         {
             cli_error_t err = cli_result_t_unwrap_err(&res);
-            cli_print_error(err); // res.storage.error (unchecked)
+            cli_print_error(&err); // res.storage.error (unchecked)
             cli_print_usage(cli);
-            exit((int) err);
+            exit((int) err.error_code);
         }
     }
     // TODO: implement better accessor functions

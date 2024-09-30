@@ -50,7 +50,8 @@ cli_result_t cli_option_enable_flag(cli_option_t* option)
     ABORT_IF(!option);
     if (option->value_type != BOOL)
     {
-        return cli_result_t_create_from_error(CLI_ERROR_INVALID_OPTION_TYPE);
+        return cli_result_t_create_from_error(
+            (cli_error_t){option->long_name, CLI_ERROR_INVALID_OPTION_TYPE});
     }
     option->given_value.BOOL_value = true;
     return cli_result_t_create_from_value();
@@ -107,32 +108,25 @@ static bool parse_bool_from_str(bool* value, char const* str)
 cli_result_t cli_option_set_value(cli_option_t* option, char const* parameter)
 {
     ABORT_IF(!option || !parameter);
-    LOG_DEBUG("Setting value for option '%s' to '%s'\n", option->long_name, parameter);
-    cli_result_t res = cli_result_t_create_from_value();
+    LOG_DEBUG("Setting value for option '%s' to '%s'.", option->long_name, parameter);
+    bool success = false;
     switch (option->value_type)
     {
         case STRING:
             option->given_value.STRING_value = parameter;
+            success                          = true;
             break;
         case INT:
-            // try_unwrap
-            if (!parse_int_from_str(&option->given_value.INT_value, parameter))
-            {
-                cli_result_t_set_error(&res, CLI_ERROR_INVALID_OPTION_TYPE);
-            }
+            success = parse_int_from_str(&option->given_value.INT_value, parameter);
             break;
         case DOUBLE:
-            if (!parse_double_from_str(&option->given_value.DOUBLE_value, parameter))
-            {
-                cli_result_t_set_error(&res, CLI_ERROR_INVALID_OPTION_TYPE);
-            }
+            success = parse_double_from_str(&option->given_value.DOUBLE_value, parameter);
             break;
         case BOOL:
-            if (!parse_bool_from_str(&option->given_value.BOOL_value, parameter))
-            {
-                cli_result_t_set_error(&res, CLI_ERROR_INVALID_OPTION_TYPE);
-            }
+            success = parse_bool_from_str(&option->given_value.BOOL_value, parameter);
             break;
     }
-    return res;
+    return success ? cli_result_t_create_from_value()
+                   : cli_result_t_create_from_error(
+                         (cli_error_t){parameter, CLI_ERROR_INVALID_PARAMETER});
 }

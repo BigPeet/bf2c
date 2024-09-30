@@ -55,14 +55,15 @@ static cli_result_t cli_parse_option(cli_t const* cli,
             if (*index >= argc - 1)
             {
                 // There is no further user provided parameter
-                return cli_result_t_create_from_error(CLI_ERROR_MISSING_PARAMETER);
+                return cli_result_t_create_from_error(
+                    (cli_error_t){argv[*index], CLI_ERROR_MISSING_PARAMETER});
             }
 
             *index += 1;
             return cli_option_set_value(&cli->options[j], argv[*index]);
         }
     }
-    return cli_result_t_create_from_error(CLI_ERROR_UNKNOWN_OPTION);
+    return cli_result_t_create_from_error((cli_error_t){argv[*index], CLI_ERROR_UNKNOWN_OPTION});
 }
 
 cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
