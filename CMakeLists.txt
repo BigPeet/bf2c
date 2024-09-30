@@ -9,6 +9,12 @@ set(CMAKE_BUILD_TYPE "Debug")
 
 include(cmake/PreventInSourceBuilds.cmake)
 
+
+# Project specific definitions TODO: move into more suitable file
+if(${LOGGING_NO_PREFIX})
+  add_definitions(-DLOGGING_NO_PREFIX=${LOGGING_NO_PREFIX})
+endif()
+
 # Add interface library for compiler warnings
 include(cmake/CompilerWarnings.cmake)
 add_library(project_warnings INTERFACE)

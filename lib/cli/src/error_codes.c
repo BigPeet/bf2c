@@ -1,8 +1,14 @@
 #include "cli/error_codes.h"
 
+#ifndef LOGGING_NO_PREFIX
 #define LOGGING_NO_PREFIX 1
+#define CLI_ERROR_CODES_CUSTOMIZED_PREFIX 1
+#endif
 #include "core/logging.h"
+#ifdef CLI_ERROR_CODES_CUSTOMIZED_PREFIX
 #undef LOGGING_NO_PREFIX
+#undef CLI_ERROR_CODES_CUSTOMIZED_PREFIX
+#endif
 
 void cli_print_error(cli_error_t error)
 {
