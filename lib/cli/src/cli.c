@@ -14,19 +14,6 @@ static void cli_version_print(cli_version_t const* version)
     printf("%d.%d.%d", version->major, version->minor, version->patch);
 }
 
-/*static char* cli_version_to_string(cli_version_t const* version)*/
-/*{*/
-/*assert(version);*/
-/*char* buffer = malloc(32 * sizeof(char));*/
-/*(void) snprintf(buffer,*/
-/*32 * sizeof(char),*/
-/*"%d.%d.%d",*/
-/*version->major,*/
-/*version->minor,*/
-/*version->patch);*/
-/*return buffer;*/
-/*}*/
-
 void cli_print_usage(cli_t const* cli)
 {
     assert(cli);
@@ -84,7 +71,8 @@ cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
     // no checking applied
     ABORT_IF(!cli);
 
-    for (int i = 1; i < argc; ++i)
+    cli_result_t parse_res = cli_result_t_create_from_value();
+    for (int i = 1; i < argc && parse_res.has_value; ++i)
     {
         char* arg = argv[i];
         if (strlen(arg) >= 2 && arg[0] == '-')
@@ -94,18 +82,13 @@ cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
             int const offset       = is_long_opt ? 2 : 1;
             bool (*cmp_func)(cli_option_t const*, char const*) =
                 is_long_opt ? cli_option_same_long_name : cli_option_same_short_name;
-            cli_result_t const res = cli_parse_option(cli, arg + offset, cmp_func, &i, argc, argv);
-            if (!res.has_value)
-            {
-                return res;
-            }
+            parse_res = cli_parse_option(cli, arg + offset, cmp_func, &i, argc, argv);
         }
         else
         {
             // TODO: positional arguments
-            LOG_AND_ABORT("Positional arguments not imlemented yet!");
+            LOG_AND_ABORT("Positional arguments are not imlemented yet!");
         }
     }
-    // All arguments parsed successfully
-    return cli_result_t_create_from_value();
+    return parse_res;
 }
