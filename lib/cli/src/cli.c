@@ -55,15 +55,14 @@ static cli_result_t cli_parse_option(cli_t const* cli,
             if (*index >= argc - 1)
             {
                 // There is no further user provided parameter
-                return cli_result_t_create_from_error(
-                    CLI_ERROR(CLI_ERROR_MISSING_PARAMETER, argv[*index]));
+                return CLI_ERR(CLI_ERROR(CLI_ERROR_MISSING_PARAMETER, argv[*index]));
             }
 
             *index += 1;
             return cli_option_set_value(&cli->options[j], argv[*index]);
         }
     }
-    return cli_result_t_create_from_error(CLI_ERROR(CLI_ERROR_UNKNOWN_OPTION, argv[*index]));
+    return CLI_ERR(CLI_ERROR(CLI_ERROR_UNKNOWN_OPTION, argv[*index]));
 }
 
 cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
@@ -72,7 +71,7 @@ cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
     // no checking applied
     ABORT_IF(!cli);
 
-    cli_result_t parse_res = cli_result_t_create_from_value();
+    cli_result_t parse_res = CLI_OK();
     for (int i = 1; i < argc && parse_res.has_value; ++i)
     {
         char* arg = argv[i];
