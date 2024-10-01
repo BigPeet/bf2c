@@ -16,6 +16,8 @@ typedef struct cli_error_t
   cli_error_code_t error_code;
 } cli_error_t;
 
+#define CLI_ERROR(ec, msg) (cli_error_t){.extra_msg=(msg), .error_code=(ec)}
+
 void cli_print_error(cli_error_t const* error);
 
 #endif /* ifndef CLI_ERROR_CODES_H_ */

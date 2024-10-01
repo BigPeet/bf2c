@@ -51,7 +51,7 @@ cli_result_t cli_option_enable_flag(cli_option_t* option)
     if (option->value_type != BOOL)
     {
         return cli_result_t_create_from_error(
-            (cli_error_t){option->long_name, CLI_ERROR_INVALID_OPTION_TYPE});
+            CLI_ERROR(CLI_ERROR_INVALID_OPTION_TYPE, option->long_name));
     }
     option->given_value.BOOL_value = true;
     return cli_result_t_create_from_value();
@@ -126,7 +126,7 @@ cli_result_t cli_option_set_value(cli_option_t* option, char const* parameter)
             success = parse_bool_from_str(&option->given_value.BOOL_value, parameter);
             break;
     }
-    return success ? cli_result_t_create_from_value()
-                   : cli_result_t_create_from_error(
-                         (cli_error_t){parameter, CLI_ERROR_INVALID_PARAMETER});
+    return success
+               ? cli_result_t_create_from_value()
+               : cli_result_t_create_from_error(CLI_ERROR(CLI_ERROR_INVALID_PARAMETER, parameter));
 }
