@@ -91,6 +91,8 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: bf2c-${{ matrix.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}
-        path: ${{ steps.strings.outputs.build-output-dir }}/app/**/bf2c*
+        path: |
+          ${{ steps.strings.outputs.build-output-dir }}/app/bf2c
+          ${{ steps.strings.outputs.build-output-dir }}/app/Release/bf2c.exe
         retention-days: 14
 
