@@ -72,7 +72,14 @@ jobs:
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       shell: bash
       run: |
-        app/bf2c --version
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          app/bf2c --version
+        elif [ "$RUNNER_OS" == "Windows" ]; then
+          app/Release/bf2c.exe --version
+        else
+          echo "$RUNNER_OS not supported."
+          exit 1
+        fi
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
@@ -85,4 +92,5 @@ jobs:
       with:
         name: bf2c-${{ matrix.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}
         path: ${{ steps.strings.outputs.build-output-dir }}/app/bf2c
+        retention-days: 14
 
