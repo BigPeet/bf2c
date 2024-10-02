@@ -53,6 +53,7 @@ jobs:
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        echo "install-dir=${{ github.workspace }}/bin" >> "$GITHUB_OUTPUT"
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -62,20 +63,24 @@ jobs:
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DCMAKE_INSTALL_PREFIX=${{ steps.strings.outputs.install-dir }}
         -S ${{ github.workspace }}
 
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
+    - name: Install
+      run: cmake --install ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+
     - name: Version Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
+      working-directory: ${{ steps.strings.outputs.install-dir }}
       shell: bash
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
-          app/bf2c --version
+          bf2c --version
         elif [ "$RUNNER_OS" == "Windows" ]; then
-          app/Release/bf2c.exe --version
+          bf2c.exe --version
         else
           echo "$RUNNER_OS not supported."
           exit 1
@@ -91,8 +96,6 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: bf2c-${{ matrix.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}
-        path: |
-          ${{ steps.strings.outputs.build-output-dir }}/app/bf2c
-          ${{ steps.strings.outputs.build-output-dir }}/app/Release/bf2c.exe
+        path: ${{ steps.strings.outputs.install-dir }}/bf2c*
         retention-days: 14
 
