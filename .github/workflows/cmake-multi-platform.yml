@@ -78,9 +78,9 @@ jobs:
       shell: bash
       run: |
         if [ "$RUNNER_OS" == "Linux" ]; then
-          bf2c --version
+          ./bf2c --version
         elif [ "$RUNNER_OS" == "Windows" ]; then
-          bf2c.exe --version
+          ./bf2c.exe --version
         else
           echo "$RUNNER_OS not supported."
           exit 1
