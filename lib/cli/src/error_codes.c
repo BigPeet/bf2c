@@ -32,6 +32,9 @@ void cli_print_error(cli_error_t const* error)
         case CLI_ERROR_INVALID_OPTION_TYPE:
             msg = "Option was given or accessed with an invalid type";
             break;
+        case CLI_ERROR_INVALID_OPTION_SEQUENCE:
+            msg = "Option in an invalid sequence";
+            break;
     }
     LOG_ERROR("%s: %s", msg, error->extra_msg);
 }

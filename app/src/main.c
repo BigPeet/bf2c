@@ -36,6 +36,7 @@ int main(int argc, char* argv[])
         }
     }
     // TODO: implement better accessor functions
+    cli_print_options(cli);
     if (cli->options[6].given_value.BOOL_value)
     {
         cli_print_usage(cli);

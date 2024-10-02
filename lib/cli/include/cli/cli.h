@@ -17,7 +17,7 @@ typedef struct cli_version_t
 typedef struct cli_t
 {
     cli_version_t version;
-    size_t count;
+    size_t options_len;
     char const* program_name;
     char const* program_description;
     struct cli_option_t* options;
@@ -25,6 +25,7 @@ typedef struct cli_t
 
 void cli_print_usage(cli_t const* cli);
 void cli_print_version(cli_t const* cli);
+void cli_print_options(cli_t const* cli);
 cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv);
 
 
@@ -53,8 +54,8 @@ cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv);
         static cli_t cli              = {.program_name        = (name),                                 \
                                          .program_description = (desc),                                 \
                                          .version             = {(major), (minor), (patch)},            \
-                                         .count               = sizeof(options) / sizeof(cli_option_t), \
-                                         .options             = options};                                           \
+                                         .options_len         = sizeof(options) / sizeof(cli_option_t), \
+                                         .options             = options};                               \
         return &cli;                                                                                    \
     }
 

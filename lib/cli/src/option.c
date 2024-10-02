@@ -12,7 +12,7 @@
 #include "core/logging.h"
 
 
-void cli_option_print(cli_option_t const* option)
+void cli_option_print_usage(cli_option_t const* option)
 {
     assert(option);
     if (option->short_name)
@@ -31,6 +31,31 @@ void cli_option_print(cli_option_t const* option)
     printf(" %s\n", option->description);
 }
 
+void cli_option_print_value(cli_option_t const* option)
+{
+    assert(option);
+    printf("\t- %s := ",
+           option->long_name    ? option->long_name
+           : option->short_name ? &option->short_name
+                                : "");
+    switch (option->value_type)
+    {
+        case STRING:
+            printf("%s\n",
+                   option->given_value.STRING_value ? option->given_value.STRING_value : "");
+            break;
+        case INT:
+            printf("%d\n", option->given_value.INT_value);
+            break;
+        case DOUBLE:
+            printf("%f\n", option->given_value.DOUBLE_value);
+            break;
+        case BOOL:
+            printf("%s\n", option->given_value.BOOL_value ? "true" : "false");
+            break;
+    }
+}
+
 bool cli_option_same_long_name(cli_option_t const* option, char const* name)
 {
     assert(option);
@@ -38,11 +63,10 @@ bool cli_option_same_long_name(cli_option_t const* option, char const* name)
     return option->long_name && strcmp(option->long_name, name) == 0;
 }
 
-bool cli_option_same_short_name(cli_option_t const* option, char const* name)
+bool cli_option_same_short_name(cli_option_t const* option, char name)
 {
     assert(option);
-    assert(name);
-    return option->short_name && option->short_name == *name;
+    return option->short_name && option->short_name == name;
 }
 
 cli_result_t cli_option_enable_flag(cli_option_t* option)
@@ -50,7 +74,7 @@ cli_result_t cli_option_enable_flag(cli_option_t* option)
     ABORT_IF(!option);
     if (option->value_type != BOOL)
     {
-        return CLI_ERR(CLI_ERROR(CLI_ERROR_INVALID_OPTION_TYPE, option->long_name));
+        return CLI_ERR(CLI_ERROR_INVALID_OPTION_TYPE, option->long_name);
     }
     option->given_value.BOOL_value = true;
     return CLI_OK();
@@ -125,5 +149,5 @@ cli_result_t cli_option_set_value(cli_option_t* option, char const* parameter)
             success = parse_bool_from_str(&option->given_value.BOOL_value, parameter);
             break;
     }
-    return success ? CLI_OK() : CLI_ERR(CLI_ERROR(CLI_ERROR_INVALID_PARAMETER, parameter));
+    return success ? CLI_OK() : CLI_ERR(CLI_ERROR_INVALID_PARAMETER, parameter);
 }

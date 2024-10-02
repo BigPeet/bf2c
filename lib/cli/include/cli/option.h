@@ -33,9 +33,10 @@ typedef struct cli_option_t
     cli_option_value_type_t value_type;
 } cli_option_t;
 
-void cli_option_print(cli_option_t const* option);
+void cli_option_print_usage(cli_option_t const* option);
+void cli_option_print_value(cli_option_t const* option);
 bool cli_option_same_long_name(cli_option_t const* option, char const* name);
-bool cli_option_same_short_name(cli_option_t const* option, char const* name);
+bool cli_option_same_short_name(cli_option_t const* option, char name);
 cli_result_t cli_option_enable_flag(cli_option_t* option);
 cli_result_t cli_option_set_value(cli_option_t* option, char const* parameter);
 

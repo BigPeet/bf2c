@@ -8,6 +8,7 @@ typedef enum cli_error_code_t
     CLI_ERROR_INVALID_PARAMETER,
     CLI_ERROR_UNKNOWN_OPTION,
     CLI_ERROR_INVALID_OPTION_TYPE,
+    CLI_ERROR_INVALID_OPTION_SEQUENCE,
 } cli_error_code_t;
 
 typedef struct cli_error_t
@@ -15,8 +16,6 @@ typedef struct cli_error_t
   char const* extra_msg;
   cli_error_code_t error_code;
 } cli_error_t;
-
-#define CLI_ERROR(ec, msg) (cli_error_t){.extra_msg=(msg), .error_code=(ec)}
 
 void cli_print_error(cli_error_t const* error);
 
