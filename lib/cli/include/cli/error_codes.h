@@ -13,8 +13,8 @@ typedef enum cli_error_code_t
 
 typedef struct cli_error_t
 {
-  char const* extra_msg;
-  cli_error_code_t error_code;
+    char const* extra_msg;
+    cli_error_code_t error_code;
 } cli_error_t;
 
 void cli_print_error(cli_error_t const* error);
