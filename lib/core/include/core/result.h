@@ -304,4 +304,5 @@
 #define RESULT_VOID_DECLARE_AND_DEFINE_WITH_PREFIX(type_name, prefix, error_type) \
     RESULT_VOID_DECLARE_WITH_PREFIX(type_name, prefix, error_type)                \
     RESULT_VOID_DEFINE_WITH_PREFIX(type_name, prefix, error_type)
+
 #endif /* ifndef CORE_RESULT_H_ */

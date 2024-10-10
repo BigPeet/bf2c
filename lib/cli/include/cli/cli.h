@@ -55,7 +55,7 @@ cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv);
                                          .program_description = (desc),                                 \
                                          .version             = {(major), (minor), (patch)},            \
                                          .options_len         = sizeof(options) / sizeof(cli_option_t), \
-                                         .options             = options};                               \
+                                         .options             = options};                                           \
         return &cli;                                                                                    \
     }
 

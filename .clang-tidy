@@ -14,7 +14,9 @@ Checks: "*,
         -cppcoreguidelines-non-private-member-variables-in-classes,
         -misc-non-private-member-variables-in-classes,
 "
-WarningsAsErrors: ''
+
+# TODO: define a reasonable set of active checks so that we can just treat all of them as error
+WarningsAsErrors: 'bugprone-*'
 HeaderFilterRegex: ''
 FormatStyle:     none
 

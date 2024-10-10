@@ -9,6 +9,32 @@ on:
     branches: [ "master" ]
 
 jobs:
+  format:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install clang-format
+        shell: bash
+        run: apt update && apt install clang-format
+      - name: Apply clang-format
+        shell: bash
+        run: make check-format
+
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install clang-tidy
+        shell: bash
+        run: apt update && apt install clang-tidy
+      - name: Apply clang-tidy
+        shell: bash
+        run: make lint
+
   build:
     runs-on: ${{ matrix.os }}
 
