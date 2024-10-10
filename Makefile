@@ -42,6 +42,7 @@ clean:
 
 check-format:
 	@find lib/ app/ -name "*.c" -or -name "*.h" -or -name "*.cpp" | xargs clang-format --dry-run -Werror
+	@echo "SUCCESS: No formatting errors found."
 
 format:
 	@find lib/ app/ -name "*.c" -or -name "*.h" -or -name "*.cpp" | xargs clang-format -i
