@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install clang-format
         shell: bash
-        run: apt update && apt install clang-format
+        run: sudo apt update && sudo apt install clang-format
       - name: Apply clang-format
         shell: bash
         run: make check-format
@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install clang-tidy
         shell: bash
-        run: apt update && apt install clang-tidy
+        run: sudo apt update && sudo apt install clang-tidy
       - name: Apply clang-tidy
         shell: bash
         run: make lint
