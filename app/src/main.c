@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "app/config.h"
 #include "cli/cli.h"
 #include "cli/error_codes.h"
 #include "cli/option.h"
@@ -9,9 +10,9 @@
 
 CLI_SETUP(
     "bf2c",
-    0,
-    1,
-    0,
+    BF2C_VERSION_MAJOR,
+    BF2C_VERSION_MINOR,
+    BF2C_VERSION_PATCH,
     "A Brainfuck to C transpiler",
     CLI_OPTION("input", 'i', "FILE", STRING, NULL, "\tInput file. Uses stdin, if not provided."),
     CLI_OPTION("output", 'o', "FILE", STRING, NULL, "\tOutput file. Uses stdout, if not provided."),

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(bf2c VERSION 0.0.1)
+project(bf2c VERSION 0.1.0)
 
 # for correct library locations across platforms
 include(GNUInstallDirs)
@@ -7,6 +7,7 @@ include(GNUInstallDirs)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_C_STANDARD "99")
+set(CMAKE_C_STANDARD_REQUIRED ON)
 
 include(cmake/PreventInSourceBuilds.cmake)
 
