@@ -9,10 +9,10 @@
 #include "core/logging.h"
 
 CLI_SETUP(
-    "bf2c",
-    BF2C_VERSION_MAJOR,
-    BF2C_VERSION_MINOR,
-    BF2C_VERSION_PATCH,
+    PROJECT_NAME,
+    VERSION_MAJOR,
+    VERSION_MINOR,
+    VERSION_PATCH,
     "A Brainfuck to C transpiler",
     CLI_OPTION("input", 'i', "FILE", STRING, NULL, "\tInput file. Uses stdin, if not provided."),
     CLI_OPTION("output", 'o', "FILE", STRING, NULL, "\tOutput file. Uses stdout, if not provided."),

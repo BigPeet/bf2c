@@ -2,8 +2,9 @@
 #define APP_CONFIG_H_
 
 // Configured options and settings via CMake
-#define BF2C_VERSION_MAJOR @bf2c_VERSION_MAJOR@
-#define BF2C_VERSION_MINOR @bf2c_VERSION_MINOR@
-#define BF2C_VERSION_PATCH @bf2c_VERSION_PATCH@
+#define VERSION_MAJOR @bf2c_VERSION_MAJOR@
+#define VERSION_MINOR @bf2c_VERSION_MINOR@
+#define VERSION_PATCH @bf2c_VERSION_PATCH@
+#define PROJECT_NAME "@PROJECT_NAME@"
 
 #endif /* ifndef APP_CONFIG_H_ */

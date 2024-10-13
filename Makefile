@@ -23,6 +23,8 @@ endif
 
 BINS := build/app/bf2c
 
+all: $(BINS)
+
 configure:
 	@cmake -S . -B build/ -G $(GENERATOR) -DCMAKE_C_COMPILER=$(C_COMPILER) -DCMAKE_CXX_COMPILER=$(CXX_COMPILER)
 
@@ -33,8 +35,6 @@ build: build/compile_commands.json
 	@cmake --build build/
 
 $(BINS): build
-
-all: $(BINS)
 
 clean:
 	@if [ -d build/ ]; then rm -rf build; fi
