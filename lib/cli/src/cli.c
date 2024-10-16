@@ -17,7 +17,7 @@ static void cli_version_print(cli_version_t const* version)
 void cli_print_usage(cli_t const* cli)
 {
     assert(cli);
-    printf("Usage: %s [options]\n\n%s\n\nOptions:\n", cli->program_name, cli->program_description);
+    printf("Usage: %s [options]\n\n%s\n\nOptions:\n", cli->name, cli->description);
     for (size_t i = 0; i < cli->options_len; ++i)
     {
         cli_option_print_usage(&cli->options[i]);
@@ -27,7 +27,7 @@ void cli_print_usage(cli_t const* cli)
 void cli_print_version(cli_t const* cli)
 {
     ABORT_IF(!cli);
-    printf("%s ", cli->program_name);
+    printf("%s ", cli->name);
     cli_version_print(&cli->version);
     printf("\n");
 }
