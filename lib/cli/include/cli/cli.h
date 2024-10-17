@@ -26,6 +26,7 @@ typedef struct cli_t
 void cli_print_usage(cli_t const* cli);
 void cli_print_version(cli_t const* cli);
 void cli_print_options(cli_t const* cli);
+void cli_destroy(cli_t* cli);
 cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv);
 
 
@@ -43,6 +44,8 @@ cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv);
     }
 
 #define CLI_INIT(var_name) cli_t const* var_name = cli_options_setup_global_gen()
+
+#define CLI_DEINIT() cli_destroy(cli_options_setup_global_gen())
 
 
 #endif /* ifndef CLI_CLI_H_ */

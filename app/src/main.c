@@ -14,7 +14,8 @@ CLI_SETUP(
     VERSION_MINOR,
     VERSION_PATCH,
     "A Brainfuck to C transpiler",
-    CLI_OPTION("input", 'i', "FILE", STRING, NULL, "\tInput file. Uses stdin, if not provided."),
+    CLI_MULTI_OPTION(
+        "input", 'i', "FILES...", STRING, "\tInput files. Uses stdin, if not provided."),
     CLI_OPTION("output", 'o', "FILE", STRING, NULL, "\tOutput file. Uses stdout, if not provided."),
     CLI_FLAG("dynamic-memory", 'd', "\tUse dynamic memory allocation."),
     CLI_FLAG("interpret", 0, "\tInterpret instead of transpiling."),
@@ -26,28 +27,32 @@ int main(int argc, char* argv[])
     CLI_INIT(cli);
 
     { // scoped to minimize lifetime of variables
-        // TODO: implement parse_args function
         cli_result_t res = cli_parse_args(cli, argc, argv);
         if (!cli_result_t_has_value(&res)) // !res.has_value
         {
             cli_error_t err = cli_result_t_unwrap_err(&res);
             cli_print_error(&err); // res.storage.error (unchecked)
             cli_print_usage(cli);
+            CLI_DEINIT(); // TODO: maybe combine this in a clean up function?
             exit((int) err.error_code);
         }
     }
+
     // TODO: implement better accessor functions
     cli_print_options(cli);
-    if (cli->options[6].given_value.BOOL_value)
+    if (cli->options[6].contained.BOOL_value)
     {
         cli_print_usage(cli);
-        exit(EXIT_SUCCESS);
     }
-    if (cli->options[7].given_value.BOOL_value)
+    else if (cli->options[7].contained.BOOL_value)
     {
         cli_print_version(cli);
-        exit(EXIT_SUCCESS);
     }
-    printf("Input specified: %s\n", cli->options[0].given_value.STRING_value);
+    else
+    {
+        printf("Input specified: %s\n", cli->options[0].contained.STRING_value);
+    }
+
+    CLI_DEINIT();
     return 0;
 }

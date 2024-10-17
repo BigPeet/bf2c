@@ -43,6 +43,66 @@ void cli_print_options(cli_t const* cli)
     printf("\n");
 }
 
+void cli_destroy(cli_t* cli)
+{
+    for (size_t i = 0; i < cli->options_len; ++i)
+    {
+        cli_option_destroy(&cli->options[i]);
+    }
+}
+
+static cli_result_t cli_parse_parameters(cli_option_t* option, int* index, int argc, char** argv)
+{
+    assert(option);
+    assert(index);
+    assert(argv);
+
+    if (*index >= argc - 1)
+    {
+        // There is no further user provided parameter.
+        return CLI_ERR(CLI_ERROR_MISSING_PARAMETER, argv[*index]);
+    }
+
+    if (option->uses_multiple_values)
+    {
+        // Check how many arguments are provided
+        // N.B.: strings in argv[i] are null-terminated, i.e. they containat least one char.
+        int const start = *index + 1;
+        int i           = start;
+        while (i < argc && argv[i][0] != '-')
+        {
+            i++;
+        }
+        int const num_args = i - start;
+
+        if (num_args <= 0)
+        {
+            // Next immediate argument starts with '-'.
+            // For "single-value" options this will be set to the option value,
+            // but an error is returned in this case, for now.
+            return CLI_ERR(CLI_ERROR_MISSING_PARAMETER, argv[*index]);
+        }
+
+        if (num_args > 1)
+        {
+            // There ARE multiple values which we can set.
+            *index += num_args;
+            return cli_option_set_values(option, (size_t) num_args, argv + start);
+        }
+
+        // Exactly 1 argument is provided: Just treat this as single-value option.
+        // Will be handled by if-block below.
+        option->uses_multiple_values = false;
+    }
+
+    // At this point, the option should be a single-value option.
+    assert(!option->uses_multiple_values);
+
+    *index += 1;
+    // Return afterwards. Nothing else to do for this option.
+    return cli_option_set_value(option, argv[*index]);
+}
+
 static cli_result_t cli_parse_long_option(
     cli_t const* cli, char const* argument, int* index, int argc, char** argv)
 {
@@ -58,15 +118,7 @@ static cli_result_t cli_parse_long_option(
                 // no parameter, so treat this as a flag
                 return cli_option_enable_flag(&cli->options[j]);
             }
-
-            if (*index >= argc - 1)
-            {
-                // There is no further user provided parameter
-                return CLI_ERR(CLI_ERROR_MISSING_PARAMETER, argv[*index]);
-            }
-
-            *index += 1;
-            return cli_option_set_value(&cli->options[j], argv[*index]);
+            return cli_parse_parameters(&cli->options[j], index, argc, argv);
         }
     }
     return CLI_ERR(CLI_ERROR_UNKNOWN_OPTION, argv[*index]);
@@ -94,15 +146,7 @@ static cli_result_t cli_parse_short_options(
                         // option may not be directly followed by further short options
                         return CLI_ERR(CLI_ERROR_INVALID_OPTION_SEQUENCE, argv[*index]);
                     }
-                    if (*index >= argc - 1)
-                    {
-                        // There is no further user provided parameter
-                        return CLI_ERR(CLI_ERROR_MISSING_PARAMETER, argument);
-                    }
-
-                    *index += 1;
-                    // Return afterwards. Nothing else to do for this option.
-                    return cli_option_set_value(&cli->options[j], argv[*index]);
+                    return cli_parse_parameters(&cli->options[j], index, argc, argv);
                 }
 
                 // no parameter, so treat this as a flag
