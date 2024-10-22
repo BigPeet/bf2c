@@ -81,7 +81,7 @@ static void cli_option_values_print(cli_option_value_type_t type,
                                     cli_option_value_t* values,
                                     size_t values_len)
 {
-    assert(values);
+    assert(values_len == 0 || values);
     for (size_t i = 0; i < values_len; ++i)
     {
         cli_option_value_print(type, values[i]);
