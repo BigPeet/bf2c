@@ -16,7 +16,7 @@ static void cli_version_print(cli_version_t const* version)
 
 void cli_print_usage(cli_t const* cli)
 {
-    assert(cli);
+    ABORT_IF(!cli);
     printf("Usage: %s [options]\n\n%s\n\nOptions:\n", cli->name, cli->description);
     for (size_t i = 0; i < cli->options_len; ++i)
     {
@@ -45,6 +45,7 @@ void cli_print_options(cli_t const* cli)
 
 void cli_destroy(cli_t* cli)
 {
+    ABORT_IF(!cli);
     for (size_t i = 0; i < cli->options_len; ++i)
     {
         cli_option_destroy(&cli->options[i]);
@@ -162,8 +163,7 @@ static cli_result_t cli_parse_short_options(
 cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
 {
     // assuming argc and argv are passed from main.
-    // no checking applied
-    ABORT_IF(!cli);
+    ABORT_IF(!cli || !argv);
 
     cli_result_t parse_res = CLI_OK();
     for (int i = 1; i < argc && parse_res.has_value; ++i)

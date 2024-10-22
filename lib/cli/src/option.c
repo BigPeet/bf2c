@@ -81,6 +81,7 @@ static void cli_option_values_print(cli_option_value_type_t type,
                                     cli_option_value_t* values,
                                     size_t values_len)
 {
+    assert(values);
     for (size_t i = 0; i < values_len; ++i)
     {
         cli_option_value_print(type, values[i]);
@@ -119,7 +120,7 @@ static bool cli_option_value_init(cli_option_value_type_t type,
 
 void cli_option_print_usage(cli_option_t const* option)
 {
-    assert(option);
+    ABORT_IF(!option);
     if (option->short_name)
     {
         printf("-%c, ", option->short_name);
@@ -138,7 +139,7 @@ void cli_option_print_usage(cli_option_t const* option)
 
 void cli_option_print_value(cli_option_t const* option)
 {
-    assert(option);
+    ABORT_IF(!option);
     printf("\t- %s := ",
            option->long_name    ? option->long_name
            : option->short_name ? &option->short_name
@@ -164,14 +165,13 @@ void cli_option_destroy(cli_option_t* option)
 
 bool cli_option_same_long_name(cli_option_t const* option, char const* name)
 {
-    assert(option);
-    assert(name);
+    ABORT_IF(!option || !name);
     return option->long_name && strcmp(option->long_name, name) == 0;
 }
 
 bool cli_option_same_short_name(cli_option_t const* option, char name)
 {
-    assert(option);
+    ABORT_IF(!option);
     return option->short_name && option->short_name == name;
 }
 
