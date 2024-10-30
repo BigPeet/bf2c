@@ -155,13 +155,26 @@ void cli_param_print_value(cli_param_t const* param)
     printf("\n");
 }
 
-void cli_param_destroy(cli_param_t* param)
+
+static void cli_param_clear_values(cli_param_t* param)
 {
-    if (param && param->uses_multiple_values)
+    assert(param);
+    if (param->uses_multiple_values)
     {
         free(param->contained.values);
+        param->contained.values = NULL;
+        param->values_len       = 0;
     }
 }
+
+void cli_param_destroy(cli_param_t* param)
+{
+    if (param)
+    {
+        cli_param_clear_values(param);
+    }
+}
+
 
 bool cli_param_same_long_name(cli_param_t const* param, char const* name)
 {
@@ -191,6 +204,8 @@ cli_result_t cli_param_set_value(cli_param_t* param, char const* argument)
 {
     ABORT_IF(!param || !argument);
     LOG_DEBUG("Setting value for argument '%s' to '%s'.", param->long_name, argument);
+    cli_param_clear_values(param);
+    param->uses_multiple_values = false; // redundant, but for clarity
     return cli_param_value_init(param->value_type, argument, &param->contained)
                ? CLI_OK()
                : CLI_ERR(CLI_ERROR_INVALID_PARAMETER_TYPE, argument);
@@ -217,7 +232,9 @@ cli_result_t cli_param_set_values(cli_param_t* param, size_t num_values, char** 
         }
     }
 
-    param->contained.values = values;
-    param->values_len       = num_values;
+    cli_param_clear_values(param);
+    param->contained.values     = values;
+    param->values_len           = num_values;
+    param->uses_multiple_values = true;
     return CLI_OK();
 }

@@ -52,7 +52,7 @@ void cli_destroy(cli_t* cli)
     }
 }
 
-static cli_result_t cli_parse_parameters(cli_param_t* param, int* index, int argc, char** argv)
+static cli_result_t cli_parse_param_arguments(cli_param_t* param, int* index, int argc, char** argv)
 {
     assert(param);
     assert(index);
@@ -104,7 +104,7 @@ static cli_result_t cli_parse_parameters(cli_param_t* param, int* index, int arg
     return cli_param_set_value(param, argv[*index]);
 }
 
-static cli_result_t cli_parse_long_parameter(
+static cli_result_t cli_parse_long_option(
     cli_t const* cli, char const* argument, int* index, int argc, char** argv)
 {
     assert(cli);
@@ -112,20 +112,21 @@ static cli_result_t cli_parse_long_parameter(
     assert(index);
     for (size_t j = 0; j < cli->parameters_len; ++j)
     {
-        if (cli_param_same_long_name(&cli->parameters[j], argument))
+        if (!cli->parameters[j].is_positional &&
+            cli_param_same_long_name(&cli->parameters[j], argument))
         {
             if (!cli->parameters[j].arg_name)
             {
                 // no parameter, so treat this as a flag
                 return cli_param_enable_flag(&cli->parameters[j]);
             }
-            return cli_parse_parameters(&cli->parameters[j], index, argc, argv);
+            return cli_parse_param_arguments(&cli->parameters[j], index, argc, argv);
         }
     }
     return CLI_ERR(CLI_ERROR_UNKNOWN_PARAMETER, argv[*index]);
 }
 
-static cli_result_t cli_parse_short_parameters(
+static cli_result_t cli_parse_short_options(
     cli_t const* cli, char const* argument, int* index, int argc, char** argv)
 {
     assert(cli);
@@ -137,7 +138,8 @@ static cli_result_t cli_parse_short_parameters(
         parse_res = CLI_ERR(CLI_ERROR_UNKNOWN_PARAMETER, argument);
         for (size_t j = 0; j < cli->parameters_len; ++j)
         {
-            if (cli_param_same_short_name(&cli->parameters[j], *argument))
+            if (!cli->parameters[j].is_positional &&
+                cli_param_same_short_name(&cli->parameters[j], *argument))
             {
                 if (cli->parameters[j].arg_name)
                 {
@@ -147,7 +149,7 @@ static cli_result_t cli_parse_short_parameters(
                         // parameter may not be directly followed by further short parameters
                         return CLI_ERR(CLI_ERROR_INVALID_PARAMETER_SEQUENCE, argv[*index]);
                     }
-                    return cli_parse_parameters(&cli->parameters[j], index, argc, argv);
+                    return cli_parse_param_arguments(&cli->parameters[j], index, argc, argv);
                 }
 
                 // no parameter, so treat this as a flag
@@ -158,6 +160,23 @@ static cli_result_t cli_parse_short_parameters(
         argument++;
     }
     return parse_res;
+}
+
+static cli_result_t cli_parse_positional_argument(
+    cli_t const* cli, char const* argument, int* index, int argc, char** argv)
+{
+    LOG_AND_ABORT("Positional arguments are not imlemented yet!");
+
+    assert(cli);
+    assert(argument);
+    assert(index);
+    assert(argv);
+    (void) (argc);
+
+    // TODO: implement
+    // TODO: consider --sep
+
+    return CLI_OK();
 }
 
 cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
@@ -181,18 +200,17 @@ cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
                     // "--" is a special case, it means end of parameters
                     break;
                 }
-                parse_res = cli_parse_long_parameter(cli, arg + 2, &i, argc, argv);
+                parse_res = cli_parse_long_option(cli, arg + 2, &i, argc, argv);
             }
             else
             {
                 // Short option
-                parse_res = cli_parse_short_parameters(cli, arg + 1, &i, argc, argv);
+                parse_res = cli_parse_short_options(cli, arg + 1, &i, argc, argv);
             }
         }
         else
         {
-            // TODO: positional arguments
-            LOG_AND_ABORT("Positional arguments are not imlemented yet!");
+            parse_res = cli_parse_positional_argument(cli, arg, &i, argc, argv);
         }
     }
     return parse_res;
