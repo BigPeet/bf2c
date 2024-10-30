@@ -1,4 +1,4 @@
-#include "cli/option.h"
+#include "cli/param.h"
 
 #include <assert.h>
 #include <errno.h>
@@ -58,7 +58,7 @@ static bool parse_bool_from_str(bool* value, char const* str)
     return false;
 }
 
-static void cli_option_value_print(cli_option_value_type_t type, cli_option_value_t value)
+static void cli_param_value_print(cli_param_value_type_t type, cli_param_value_t value)
 {
     switch (type)
     {
@@ -77,14 +77,14 @@ static void cli_option_value_print(cli_option_value_type_t type, cli_option_valu
     }
 }
 
-static void cli_option_values_print(cli_option_value_type_t type,
-                                    cli_option_value_t* values,
-                                    size_t values_len)
+static void cli_param_values_print(cli_param_value_type_t type,
+                                   cli_param_value_t* values,
+                                   size_t values_len)
 {
     assert(values_len == 0 || values);
     for (size_t i = 0; i < values_len; ++i)
     {
-        cli_option_value_print(type, values[i]);
+        cli_param_value_print(type, values[i]);
         if (i < values_len - 1)
         {
             printf(", ");
@@ -92,9 +92,9 @@ static void cli_option_values_print(cli_option_value_type_t type,
     }
 }
 
-static bool cli_option_value_init(cli_option_value_type_t type,
-                                  char const* argument,
-                                  cli_option_value_t* out)
+static bool cli_param_value_init(cli_param_value_type_t type,
+                                 char const* argument,
+                                 cli_param_value_t* out)
 {
     assert(argument);
     assert(out);
@@ -118,106 +118,106 @@ static bool cli_option_value_init(cli_option_value_type_t type,
     return success;
 }
 
-void cli_option_print_usage(cli_option_t const* option)
+void cli_param_print_usage(cli_param_t const* param)
 {
-    ABORT_IF(!option);
-    if (option->short_name)
+    ABORT_IF(!param);
+    if (param->short_name)
     {
-        printf("-%c, ", option->short_name);
+        printf("-%c, ", param->short_name);
     }
     else
     {
         printf("    ");
     }
-    printf("--%s", option->long_name);
-    if (option->parameter)
+    printf("--%s", param->long_name);
+    if (param->arg_name)
     {
-        printf(" <%s>", option->parameter);
+        printf(" <%s>", param->arg_name);
     }
-    printf(" %s\n", option->description);
+    printf(" %s\n", param->description);
 }
 
-void cli_option_print_value(cli_option_t const* option)
+void cli_param_print_value(cli_param_t const* param)
 {
-    ABORT_IF(!option);
+    ABORT_IF(!param);
     printf("\t- %s := ",
-           option->long_name    ? option->long_name
-           : option->short_name ? &option->short_name
-                                : "");
-    if (option->uses_multiple_values)
+           param->long_name    ? param->long_name
+           : param->short_name ? &param->short_name
+                               : "");
+    if (param->uses_multiple_values)
     {
-        cli_option_values_print(option->value_type, option->contained.values, option->values_len);
+        cli_param_values_print(param->value_type, param->contained.values, param->values_len);
     }
     else
     {
-        cli_option_value_print(option->value_type, option->contained);
+        cli_param_value_print(param->value_type, param->contained);
     }
     printf("\n");
 }
 
-void cli_option_destroy(cli_option_t* option)
+void cli_param_destroy(cli_param_t* param)
 {
-    if (option && option->uses_multiple_values)
+    if (param && param->uses_multiple_values)
     {
-        free(option->contained.values);
+        free(param->contained.values);
     }
 }
 
-bool cli_option_same_long_name(cli_option_t const* option, char const* name)
+bool cli_param_same_long_name(cli_param_t const* param, char const* name)
 {
-    ABORT_IF(!option || !name);
-    return option->long_name && strcmp(option->long_name, name) == 0;
+    ABORT_IF(!param || !name);
+    return param->long_name && strcmp(param->long_name, name) == 0;
 }
 
-bool cli_option_same_short_name(cli_option_t const* option, char name)
+bool cli_param_same_short_name(cli_param_t const* param, char name)
 {
-    ABORT_IF(!option);
-    return option->short_name && option->short_name == name;
+    ABORT_IF(!param);
+    return param->short_name && param->short_name == name;
 }
 
-cli_result_t cli_option_enable_flag(cli_option_t* option)
+cli_result_t cli_param_enable_flag(cli_param_t* param)
 {
-    ABORT_IF(!option);
-    if (option->value_type != BOOL)
+    ABORT_IF(!param);
+    if (param->value_type != BOOL)
     {
-        return CLI_ERR(CLI_ERROR_INVALID_OPTION_TYPE, option->long_name);
+        return CLI_ERR(CLI_ERROR_INVALID_PARAMETER_TYPE, param->long_name);
     }
-    option->contained.BOOL_value = true;
+    param->contained.BOOL_value = true;
     return CLI_OK();
 }
 
 
-cli_result_t cli_option_set_value(cli_option_t* option, char const* argument)
+cli_result_t cli_param_set_value(cli_param_t* param, char const* argument)
 {
-    ABORT_IF(!option || !argument);
-    LOG_DEBUG("Setting value for option '%s' to '%s'.", option->long_name, argument);
-    return cli_option_value_init(option->value_type, argument, &option->contained)
+    ABORT_IF(!param || !argument);
+    LOG_DEBUG("Setting value for argument '%s' to '%s'.", param->long_name, argument);
+    return cli_param_value_init(param->value_type, argument, &param->contained)
                ? CLI_OK()
-               : CLI_ERR(CLI_ERROR_INVALID_OPTION_TYPE, argument);
+               : CLI_ERR(CLI_ERROR_INVALID_PARAMETER_TYPE, argument);
 }
 
 
-cli_result_t cli_option_set_values(cli_option_t* option, size_t num_values, char** arguments)
+cli_result_t cli_param_set_values(cli_param_t* param, size_t num_values, char** arguments)
 {
-    ABORT_IF(!option || !arguments || num_values < 2);
+    ABORT_IF(!param || !arguments || num_values < 2);
 
-    cli_option_value_t* values = malloc(num_values * sizeof(cli_option_value_t));
+    cli_param_value_t* values = malloc(num_values * sizeof(cli_param_value_t));
     LOG_AND_ABORT_IF(values == NULL, "Allocation failed.");
 
     for (size_t i = 0; i < num_values; ++i)
     {
-        LOG_DEBUG("Setting %zu. value for option '%s' to '%s'.",
+        LOG_DEBUG("Setting %zu. value for argument '%s' to '%s'.",
                   i + 1,
-                  option->long_name,
+                  param->long_name,
                   arguments[i]);
-        if (!cli_option_value_init(option->value_type, arguments[i], &values[i]))
+        if (!cli_param_value_init(param->value_type, arguments[i], &values[i]))
         {
             free(values);
-            return CLI_ERR(CLI_ERROR_INVALID_OPTION_TYPE, arguments[i]);
+            return CLI_ERR(CLI_ERROR_INVALID_PARAMETER_TYPE, arguments[i]);
         }
     }
 
-    option->contained.values = values;
-    option->values_len       = num_values;
+    param->contained.values = values;
+    param->values_len       = num_values;
     return CLI_OK();
 }

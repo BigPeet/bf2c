@@ -1,7 +1,7 @@
 set(CLI_SOURCE_FILES
   src/cli.c
   src/error_codes.c
-  src/option.c
+  src/param.c
   src/result.c
   )
 add_library(cli STATIC ${CLI_SOURCE_FILES})
