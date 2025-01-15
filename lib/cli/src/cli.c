@@ -191,7 +191,6 @@ static cli_result_t cli_parse_positional_argument(
     assert(cli);
     assert(argument);
     assert(index);
-    // TODO: consider --sep
 
     for (size_t j = 0; j < cli->parameters_len; ++j)
     {
@@ -234,9 +233,13 @@ cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
                 parse_res = cli_parse_short_options(cli, arg + 1, &i, argc, argv);
             }
         }
-        else
+        else if (arg[0] != '-')
         {
             parse_res = cli_parse_positional_argument(cli, arg, &i, argc, argv);
+        }
+        else
+        {
+            parse_res = CLI_ERR(CLI_ERROR_UNKNOWN_PARAMETER, argv[i]);
         }
     }
     return parse_res;

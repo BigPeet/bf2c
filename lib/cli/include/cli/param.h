@@ -84,9 +84,10 @@ cli_result_t cli_param_set_values(cli_param_t* param, size_t num_values, char** 
         .uses_multiple_values = true, .is_positional = true, .is_set_by_user = false,          \
     }
 
-#define COMMON_OPTIONS()                                                                    \
-    CLI_FLAG("verbose", 'v', "\t\tVerbose mode"), CLI_FLAG("quiet", 'q', "\t\tQuiet mode"), \
-        CLI_FLAG("help", 'h', "\t\tPrint this help message."),                              \
+#define COMMON_OPTIONS()                                                                        \
+    CLI_FLAG("sep", 0, "\t\tNo-op to separate positional arguments."),                          \
+        CLI_FLAG("verbose", 'v', "\t\tVerbose mode"), CLI_FLAG("quiet", 'q', "\t\tQuiet mode"), \
+        CLI_FLAG("help", 'h', "\t\tPrint this help message."),                                  \
         CLI_FLAG("version", 'V', "\t\tPrint version.")
 
 
