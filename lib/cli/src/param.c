@@ -121,18 +121,25 @@ static bool cli_param_value_init(cli_param_value_type_t type,
 void cli_param_print_usage(cli_param_t const* param)
 {
     ABORT_IF(!param);
-    if (param->short_name)
+    if (param->is_positional)
     {
-        printf("-%c, ", param->short_name);
+        printf("<%s%s>", param->long_name, param->uses_multiple_values ? "..." : "");
     }
     else
     {
-        printf("    ");
-    }
-    printf("--%s", param->long_name);
-    if (param->arg_name)
-    {
-        printf(" <%s>", param->arg_name);
+        if (param->short_name)
+        {
+            printf("-%c, ", param->short_name);
+        }
+        else
+        {
+            printf("    ");
+        }
+        printf("--%s", param->long_name);
+        if (param->arg_name)
+        {
+            printf(" <%s>", param->arg_name);
+        }
     }
     printf(" %s\n", param->description);
 }

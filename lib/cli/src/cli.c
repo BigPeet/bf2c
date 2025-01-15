@@ -17,10 +17,37 @@ static void cli_version_print(cli_version_t const* version)
 void cli_print_usage(cli_t const* cli)
 {
     ABORT_IF(!cli);
-    printf("Usage: %s [options]\n\n%s\n\nOptions:\n", cli->name, cli->description);
+    printf("Usage: %s [options] ", cli->name);
+    int num_positional = 0;
     for (size_t i = 0; i < cli->parameters_len; ++i)
     {
-        cli_param_print_usage(&cli->parameters[i]);
+        if (cli->parameters[i].is_positional)
+        {
+            printf("<%s%s> ",
+                   cli->parameters[i].long_name,
+                   cli->parameters[i].uses_multiple_values ? "..." : "");
+            num_positional++;
+        }
+    }
+    printf("\n\n%s\n", cli->description);
+    if (num_positional > 0)
+    {
+        printf("\nArguments:\n");
+        for (size_t i = 0; i < cli->parameters_len; ++i)
+        {
+            if (cli->parameters[i].is_positional)
+            {
+                cli_param_print_usage(&cli->parameters[i]);
+            }
+        }
+    }
+    printf("\nOptions:\n");
+    for (size_t i = 0; i < cli->parameters_len; ++i)
+    {
+        if (!cli->parameters[i].is_positional)
+        {
+            cli_param_print_usage(&cli->parameters[i]);
+        }
     }
 }
 
