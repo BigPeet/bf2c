@@ -197,6 +197,8 @@ static cli_result_t cli_parse_positional_argument(
     {
         if (cli->parameters[j].is_positional && !cli->parameters[j].is_set_by_user)
         {
+            // decrement index to "simulate" an option before the position parameter
+            *index -= 1;
             return cli_parse_param_arguments(&cli->parameters[j], index, argc, argv);
         }
     }
