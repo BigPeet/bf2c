@@ -159,6 +159,7 @@ void cli_param_print_value(cli_param_t const* param)
 static void cli_param_clear_values(cli_param_t* param)
 {
     assert(param);
+    param->is_set_by_user = false;
     if (param->uses_multiple_values)
     {
         free(param->contained.values);
@@ -205,7 +206,8 @@ cli_result_t cli_param_set_value(cli_param_t* param, char const* argument)
     ABORT_IF(!param || !argument);
     LOG_DEBUG("Setting value for argument '%s' to '%s'.", param->long_name, argument);
     cli_param_clear_values(param);
-    param->uses_multiple_values = false; // redundant, but for clarity
+    param->uses_multiple_values = false;
+    param->is_set_by_user       = true;
     return cli_param_value_init(param->value_type, argument, &param->contained)
                ? CLI_OK()
                : CLI_ERR(CLI_ERROR_INVALID_PARAMETER_TYPE, argument);
@@ -236,5 +238,6 @@ cli_result_t cli_param_set_values(cli_param_t* param, size_t num_values, char** 
     param->contained.values     = values;
     param->values_len           = num_values;
     param->uses_multiple_values = true;
+    param->is_set_by_user       = true;
     return CLI_OK();
 }

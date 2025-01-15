@@ -67,7 +67,7 @@ static cli_result_t cli_parse_param_arguments(cli_param_t* param, int* index, in
     if (param->uses_multiple_values)
     {
         // Check how many arguments are provided
-        // N.B.: strings in argv[i] are null-terminated, i.e. they containat least one char.
+        // N.B.: strings in argv[i] are null-terminated, i.e. they contain at least one char.
         int const start = *index + 1;
         int i           = start;
         while (i < argc && argv[i][0] != '-')
@@ -92,12 +92,8 @@ static cli_result_t cli_parse_param_arguments(cli_param_t* param, int* index, in
         }
 
         // Exactly 1 argument is provided: Just treat this as single-value parameter.
-        // Will be handled by if-block below.
-        param->uses_multiple_values = false;
+        // Will be handled below.
     }
-
-    // At this point, the parameter should be a single-value parameter.
-    assert(!param->uses_multiple_values);
 
     *index += 1;
     // Return afterwards. Nothing else to do for this parameter.
@@ -165,18 +161,19 @@ static cli_result_t cli_parse_short_options(
 static cli_result_t cli_parse_positional_argument(
     cli_t const* cli, char const* argument, int* index, int argc, char** argv)
 {
-    LOG_AND_ABORT("Positional arguments are not imlemented yet!");
-
     assert(cli);
     assert(argument);
     assert(index);
-    assert(argv);
-    (void) (argc);
-
-    // TODO: implement
     // TODO: consider --sep
 
-    return CLI_OK();
+    for (size_t j = 0; j < cli->parameters_len; ++j)
+    {
+        if (cli->parameters[j].is_positional && !cli->parameters[j].is_set_by_user)
+        {
+            return cli_parse_param_arguments(&cli->parameters[j], index, argc, argv);
+        }
+    }
+    return CLI_ERR(CLI_ERROR_UNKNOWN_PARAMETER, argv[*index]);
 }
 
 cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)

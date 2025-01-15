@@ -40,6 +40,7 @@ typedef struct cli_param_t
     char short_name;
     bool uses_multiple_values;
     bool is_positional;
+    bool is_set_by_user;
 } cli_param_t;
 
 void cli_param_print_usage(cli_param_t const* param);
@@ -57,6 +58,7 @@ cli_result_t cli_param_set_values(cli_param_t* param, size_t num_values, char** 
         .contained = {.type##_value = (default_val)}, .values_len = 0, .long_name = (name), \
         .arg_name = (param), .description = (desc), .value_type = (type),                   \
         .short_name = (short_form), .uses_multiple_values = false, .is_positional = false,  \
+        .is_set_by_user = false,                                                            \
     }
 
 #define CLI_FLAG(name, short_form, desc) CLI_OPTION(name, short_form, NULL, BOOL, false, desc)
@@ -65,21 +67,21 @@ cli_result_t cli_param_set_values(cli_param_t* param, size_t num_values, char** 
     {                                                                                             \
         .contained = {.values = NULL}, .values_len = 0, .long_name = (name), .arg_name = (param), \
         .description = (desc), .value_type = (type), .short_name = (short_form),                  \
-        .uses_multiple_values = true, .is_positional = false,                                     \
+        .uses_multiple_values = true, .is_positional = false, .is_set_by_user = false,            \
     }
 
 #define CLI_POSITIONAL_ARG(name, type, default_val, desc)                                   \
     {                                                                                       \
         .contained = {.type##_value = (default_val)}, .values_len = 0, .long_name = (name), \
         .arg_name = NULL, .description = (desc), .value_type = (type), .short_name = '\0',  \
-        .uses_multiple_values = false, .is_positional = true,                               \
+        .uses_multiple_values = false, .is_positional = true, .is_set_by_user = false,      \
     }
 
 #define CLI_POSITIONAL_MULTI_ARG(name, type, desc)                                             \
     {                                                                                          \
         .contained = {.values = NULL}, .values_len = 0, .long_name = (name), .arg_name = NULL, \
         .description = (desc), .value_type = (type), .short_name = '\0',                       \
-        .uses_multiple_values = true, .is_positional = true,                                   \
+        .uses_multiple_values = true, .is_positional = true, .is_set_by_user = false,          \
     }
 
 #define COMMON_OPTIONS()                                                                    \
