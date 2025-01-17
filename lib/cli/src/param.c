@@ -123,9 +123,7 @@ void cli_param_print_usage(cli_param_t const* param)
     ABORT_IF(!param);
     if (param->is_positional)
     {
-        // TODO: Issue with uses_multiple_values:
-        // Can be overwritten by the user, but the usage "documentation" should be static
-        printf("<%s%s>", param->long_name, param->uses_multiple_values ? "..." : "");
+        printf("<%s%s>", param->long_name, param->may_use_multiple_values ? "..." : "");
     }
     else
     {

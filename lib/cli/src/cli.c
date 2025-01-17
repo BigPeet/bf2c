@@ -25,10 +25,8 @@ void cli_print_usage(cli_t const* cli)
     {
         if (cli->parameters[i].is_positional)
         {
-            // TODO: Issue with uses_multiple_values:
-            // Can be overwritten by the user, but the usage "documentation" should be static
             bool requires_separator = false;
-            if (cli->parameters[i].uses_multiple_values)
+            if (cli->parameters[i].may_use_multiple_values)
             {
                 // check if this is the last positional parameter
                 for (size_t j = i + 1; j < cli->parameters_len; ++j)
@@ -42,7 +40,7 @@ void cli_print_usage(cli_t const* cli)
             }
             printf("<%s%s> %s",
                    cli->parameters[i].long_name,
-                   cli->parameters[i].uses_multiple_values ? "..." : "",
+                   cli->parameters[i].may_use_multiple_values ? "..." : "",
                    requires_separator ? "[--] " : "");
             num_positional++;
         }
@@ -113,7 +111,7 @@ static cli_result_t cli_parse_param_arguments(cli_param_t* param, int* index, in
         return CLI_ERR(CLI_ERROR_MISSING_ARGUMENT, argv[*index]);
     }
 
-    if (param->uses_multiple_values)
+    if (param->may_use_multiple_values)
     {
         // Check how many arguments are provided
         // N.B.: strings in argv[i] are null-terminated, i.e. they contain at least one char.
