@@ -18,18 +18,40 @@ void cli_print_usage(cli_t const* cli)
 {
     ABORT_IF(!cli);
     printf("Usage: %s [options] ", cli->name);
+
+    // Print positional parameters
     int num_positional = 0;
     for (size_t i = 0; i < cli->parameters_len; ++i)
     {
         if (cli->parameters[i].is_positional)
         {
-            printf("<%s%s> ",
+            // TODO: Issue with uses_multiple_values:
+            // Can be overwritten by the user, but the usage "documentation" should be static
+            bool requires_separator = false;
+            if (cli->parameters[i].uses_multiple_values)
+            {
+                // check if this is the last positional parameter
+                for (size_t j = i + 1; j < cli->parameters_len; ++j)
+                {
+                    if (cli->parameters[j].is_positional)
+                    {
+                        requires_separator = true;
+                        break;
+                    }
+                }
+            }
+            printf("<%s%s> %s",
                    cli->parameters[i].long_name,
-                   cli->parameters[i].uses_multiple_values ? "..." : "");
+                   cli->parameters[i].uses_multiple_values ? "..." : "",
+                   requires_separator ? "[--] " : "");
             num_positional++;
         }
     }
+
+    // Print program description
     printf("\n\n%s\n", cli->description);
+
+    // Print Argument and Option descriptions
     if (num_positional > 0)
     {
         printf("\nArguments:\n");
