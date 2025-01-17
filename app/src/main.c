@@ -39,6 +39,11 @@ int main(int argc, char* argv[])
     }
 
     // TODO: implement better accessor functions
+    // TODO: EXAMPLE...how to improve? Do I want macros?
+    if (cli_param_unwrap_bool(cli_get_param_by_name(cli, "help")))
+    {
+        cli_print_usage(cli);
+    }
     cli_print_parameters(cli);
     if (cli->parameters[6].contained.BOOL_value)
     {

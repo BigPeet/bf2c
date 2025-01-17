@@ -45,14 +45,48 @@ typedef struct cli_param_t
     bool is_set_by_user : 1;          // this may change during parsing based on actual usage
 } cli_param_t;
 
+// Print functions
 void cli_param_print_usage(cli_param_t const* param);
 void cli_param_print_value(cli_param_t const* param);
-void cli_param_destroy(cli_param_t* param);
+
+// Utility functions
 bool cli_param_same_long_name(cli_param_t const* param, char const* name);
 bool cli_param_same_short_name(cli_param_t const* param, char name);
+
+// Initialization / Setter functions
 cli_result_t cli_param_enable_flag(cli_param_t* param);
 cli_result_t cli_param_set_value(cli_param_t* param, char const* argument);
 cli_result_t cli_param_set_values(cli_param_t* param, size_t num_values, char** arguments);
+
+// Deinit / Clear functions
+void cli_param_destroy(cli_param_t* param);
+
+// Accessor functions
+// TODO: Accessors should have these general APIs available
+//
+// 1. UWRAP: Return the double/int/... value(s), panic on error.
+// 2. TRY: Write the double/int/... value(s) into OUT parameter, return false on error or a result
+//         Or introduce results for double/int/... and return those
+// 3. UNCHECKED: Return the double/int/... value(s) without checking for errors or UB
+// 4. GET_OR: Return the double/int/... value(s) or a default value
+//               Could be redundant with a return-result-based version for TRY
+//               cli_param_bool_res_unwrap_or(cli_param_get_bool(param), false);
+//               cli_param_get_bool_or(param, false);
+
+// Abort if the parameter does not contain the expected type
+double cli_param_unwrap_double(cli_param_t const* param);
+char const* cli_param_unwrap_string(cli_param_t const* param);
+int cli_param_unwrap_int(cli_param_t const* param);
+bool cli_param_unwrap_bool(cli_param_t const* param);
+
+double const* cli_param_unwrap_doubles(cli_param_t const* param);
+char const* const* cli_param_unwrap_strings(cli_param_t const* param);
+int const* cli_param_unwrap_ints(cli_param_t const* param);
+bool const* cli_param_unwrap_bools(cli_param_t const* param);
+
+
+
+
 
 // MACROs for convenience
 #define CLI_OPTION(name, short_form, param, type, default_val, desc)                        \
