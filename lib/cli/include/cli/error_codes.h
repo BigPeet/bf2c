@@ -9,6 +9,7 @@ typedef enum cli_error_code_t
     CLI_ERROR_UNKNOWN_PARAMETER,
     CLI_ERROR_INVALID_PARAMETER_TYPE,
     CLI_ERROR_INVALID_PARAMETER_SEQUENCE,
+    CLI_ERROR_DUPLICATE_PARAMETER,
 } cli_error_code_t;
 
 typedef struct cli_error_t

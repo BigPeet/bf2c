@@ -160,11 +160,17 @@ static cli_result_t cli_parse_long_option(
         if (!cli->parameters[j].is_positional &&
             cli_param_same_long_name(&cli->parameters[j], argument))
         {
+            if (cli->parameters[j].is_set_by_user)
+            {
+                // already set previously
+                return CLI_ERR(CLI_ERROR_DUPLICATE_PARAMETER, argument);
+            }
             if (!cli->parameters[j].arg_name)
             {
-                // no parameter, so treat this as a flag
+                // takes no arguments, so treat this as a flag
                 return cli_param_enable_flag(&cli->parameters[j]);
             }
+            // parse arguments of parameter
             return cli_parse_param_arguments(&cli->parameters[j], index, argc, argv);
         }
     }
@@ -186,6 +192,11 @@ static cli_result_t cli_parse_short_options(
             if (!cli->parameters[j].is_positional &&
                 cli_param_same_short_name(&cli->parameters[j], *argument))
             {
+                if (cli->parameters[j].is_set_by_user)
+                {
+                    // already set previously
+                    return CLI_ERR(CLI_ERROR_DUPLICATE_PARAMETER, argument);
+                }
                 if (cli->parameters[j].arg_name)
                 {
                     // parameter expects an argument
@@ -197,7 +208,7 @@ static cli_result_t cli_parse_short_options(
                     return cli_parse_param_arguments(&cli->parameters[j], index, argc, argv);
                 }
 
-                // no parameter, so treat this as a flag
+                // takes no arguments, so treat this as a flag
                 parse_res = cli_param_enable_flag(&cli->parameters[j]);
                 break; // out of the for loop
             }
