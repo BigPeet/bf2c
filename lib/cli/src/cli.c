@@ -198,7 +198,18 @@ static cli_result_t cli_parse_positional_argument(
         {
             // decrement index to "simulate" an option before the position parameter
             *index -= 1;
-            return cli_parse_param_arguments(&cli->parameters[j], index, argc, argv);
+            bool const accepts_multiple_inputs = cli->parameters[j].uses_multiple_values;
+            cli_result_t const parse_res =
+                cli_parse_param_arguments(&cli->parameters[j], index, argc, argv);
+            if (accepts_multiple_inputs && cli_result_t_has_value(&parse_res))
+            {
+                // if last argument of positional parameter is followed by '--', consume it
+                if (index && *index < argc - 1 && strcmp(argv[*index + 1], "--") == 0)
+                {
+                    *index += 1;
+                }
+            }
+            return parse_res;
         }
     }
     return CLI_ERR(CLI_ERROR_UNKNOWN_PARAMETER, argv[*index]);
@@ -214,29 +225,22 @@ cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
     {
         char const* arg      = argv[i];
         size_t const arg_len = strlen(arg);
-        if (arg_len >= 2 && arg[0] == '-')
+        // Case 1: Long option, e.g. "--foo"
+        if (arg_len >= 3 && arg[0] == '-' && arg[1] == '-')
         {
-            // Parsing an option
-            if (arg[1] == '-')
-            {
-                // Long option
-                if (arg_len == 2)
-                {
-                    // "--" is a special case, it means end of parameters
-                    break;
-                }
-                parse_res = cli_parse_long_option(cli, arg + 2, &i, argc, argv);
-            }
-            else
-            {
-                // Short option
-                parse_res = cli_parse_short_options(cli, arg + 1, &i, argc, argv);
-            }
+            parse_res = cli_parse_long_option(cli, arg + 2, &i, argc, argv);
         }
+        // Case 2: Short option(s), e.g. "-f" or "-fV"
+        else if (arg_len >= 2 && arg[0] == '-' && arg[1] != '-')
+        {
+            parse_res = cli_parse_short_options(cli, arg + 1, &i, argc, argv);
+        }
+        // Case 3: Positional argument
         else if (arg[0] != '-')
         {
             parse_res = cli_parse_positional_argument(cli, arg, &i, argc, argv);
         }
+        // Case 4: Error, invalid/unknown parameter, e.g. "-" or "--".
         else
         {
             parse_res = CLI_ERR(CLI_ERROR_UNKNOWN_PARAMETER, argv[i]);
