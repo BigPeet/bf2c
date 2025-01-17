@@ -207,11 +207,12 @@ static cli_result_t cli_parse_short_options(
     return parse_res;
 }
 
-static cli_result_t cli_parse_positional_argument(
-    cli_t const* cli, char const* argument, int* index, int argc, char** argv)
+static cli_result_t cli_parse_positional_argument(cli_t const* cli,
+                                                  int* index,
+                                                  int argc,
+                                                  char** argv)
 {
     assert(cli);
-    assert(argument);
     assert(index);
 
     for (size_t j = 0; j < cli->parameters_len; ++j)
@@ -260,7 +261,7 @@ cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
         // Case 3: Positional argument
         else if (arg[0] != '-')
         {
-            parse_res = cli_parse_positional_argument(cli, arg, &i, argc, argv);
+            parse_res = cli_parse_positional_argument(cli, &i, argc, argv);
         }
         // Case 4: Error, invalid/unknown parameter, e.g. "-" or "--".
         else
