@@ -4,7 +4,7 @@
 #include "app/config.h"
 #include "cli/cli.h"
 #include "cli/error_codes.h"
-#include "cli/option.h"
+#include "cli/param.h"
 #include "cli/result.h"
 #include "core/logging.h"
 
@@ -39,18 +39,18 @@ int main(int argc, char* argv[])
     }
 
     // TODO: implement better accessor functions
-    cli_print_options(cli);
-    if (cli->options[6].contained.BOOL_value)
+    cli_print_parameters(cli);
+    if (cli->parameters[6].contained.BOOL_value)
     {
         cli_print_usage(cli);
     }
-    else if (cli->options[7].contained.BOOL_value)
+    else if (cli->parameters[7].contained.BOOL_value)
     {
         cli_print_version(cli);
     }
     else
     {
-        printf("Input specified: %s\n", cli->options[0].contained.STRING_value);
+        printf("Input specified: %s\n", cli->parameters[0].contained.STRING_value);
     }
 
     CLI_DEINIT();

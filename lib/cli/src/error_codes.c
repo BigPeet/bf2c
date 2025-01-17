@@ -20,20 +20,20 @@ void cli_print_error(cli_error_t const* error)
         case CLI_ERROR:
             msg = "Unspecified error occurred";
             break;
-        case CLI_ERROR_MISSING_PARAMETER:
-            msg = "Option is missing a parameter";
+        case CLI_ERROR_MISSING_ARGUMENT:
+            msg = "Parameter is missing an argument";
             break;
-        case CLI_ERROR_INVALID_PARAMETER:
-            msg = "Option was given an invalid parameter";
+        case CLI_ERROR_INVALID_ARGUMENT:
+            msg = "Parameter was given an invalid argument";
             break;
-        case CLI_ERROR_UNKNOWN_OPTION:
-            msg = "Unknown option encountered";
+        case CLI_ERROR_UNKNOWN_PARAMETER:
+            msg = "Unknown parameter encountered";
             break;
-        case CLI_ERROR_INVALID_OPTION_TYPE:
-            msg = "Option was given or accessed with an invalid type";
+        case CLI_ERROR_INVALID_PARAMETER_TYPE:
+            msg = "Parameter was given or accessed with an invalid type";
             break;
-        case CLI_ERROR_INVALID_OPTION_SEQUENCE:
-            msg = "Option in an invalid sequence";
+        case CLI_ERROR_INVALID_PARAMETER_SEQUENCE:
+            msg = "Parameter in an invalid sequence";
             break;
     }
     LOG_ERROR("%s: %s", msg, error->extra_msg);
