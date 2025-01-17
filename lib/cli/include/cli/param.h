@@ -39,10 +39,10 @@ typedef struct cli_param_t
     cli_param_value_type_t value_type;
     char short_name;
     // Using bitfields to pack the booleans into a single byte
-    bool uses_multiple_values : 1; // this may change during parsing based on actual usage
+    bool uses_multiple_values : 1;    // this may change during parsing based on actual usage
     bool may_use_multiple_values : 1; // this is a static property
-    bool is_positional : 1; // this is a static property
-    bool is_set_by_user : 1; // this may change during parsing based on actual usage
+    bool is_positional : 1;           // this is a static property
+    bool is_set_by_user : 1;          // this may change during parsing based on actual usage
 } cli_param_t;
 
 void cli_param_print_usage(cli_param_t const* param);
