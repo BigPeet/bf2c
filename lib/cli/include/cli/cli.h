@@ -35,15 +35,17 @@ cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv);
 void cli_destroy(cli_t* cli);
 
 // Accessor functions
-// TODO: Should these be result-based? Should there be additional result-based APIs?
-// E.g., see param.h
-// TODO: What if the parameter does not exist? Return null? Abort? Different Functions for either?
-// Since this here is more of "option" thing, I actually think returning a pointer might be
-// fine...result might not be needed.
-// But a panick-ing vs. return null API might still be interesting
+// There are two variants of param-accessor functions:
+// 1. cli_get_param_by_*: Will abort if parameter is not found, always returns a non-null pointer.
+// 2. cli_try_get_param_by_*: Returns null if parameter is not found.
+// The second API might be replaced with a "result-based" API in the future.
 cli_param_t const* cli_get_param_by_name(cli_t const* cli, char const* name);
 cli_param_t const* cli_get_param_by_index(cli_t const* cli, size_t index);
 cli_param_t const* cli_get_param_by_short_form(cli_t const* cli, char short_form);
+
+cli_param_t const* cli_try_get_param_by_name(cli_t const* cli, char const* name);
+cli_param_t const* cli_try_get_param_by_index(cli_t const* cli, size_t index);
+cli_param_t const* cli_try_get_param_by_short_form(cli_t const* cli, char short_form);
 
 // User MACROS for setup and initialization
 #define CLI_SETUP(program_name, major, minor, patch, desc, ...)                                         \

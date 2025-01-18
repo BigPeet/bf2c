@@ -40,16 +40,16 @@ int main(int argc, char* argv[])
 
     // TODO: implement better accessor functions
     // TODO: EXAMPLE...how to improve? Do I want macros?
-    if (cli_param_unwrap_bool(cli_get_param_by_name(cli, "help")))
-    {
-        cli_print_usage(cli);
-    }
+    /*if (cli_param_unwrap_bool(cli_get_param_by_name(cli, "help")))*/
+    /*{*/
+      /*cli_print_usage(cli);*/
+    /*}*/
     cli_print_parameters(cli);
-    if (cli->parameters[6].contained.BOOL_value)
+    if (cli_get_param_by_name(cli, "help")->contained.BOOL_value)
     {
         cli_print_usage(cli);
     }
-    else if (cli->parameters[7].contained.BOOL_value)
+    else if (cli_get_param_by_short_form(cli, 'v')->contained.BOOL_value)
     {
         cli_print_version(cli);
     }

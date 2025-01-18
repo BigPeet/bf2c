@@ -226,7 +226,7 @@ cli_result_t cli_param_set_values(cli_param_t* param, size_t num_values, char** 
     ABORT_IF(!param || !arguments || num_values < 2);
 
     cli_param_value_t* values = malloc(num_values * sizeof(cli_param_value_t));
-    LOG_AND_ABORT_IF(values == NULL, "Allocation failed.");
+    LOG_MSG_AND_ABORT_IF(values == NULL, "Allocation failed.");
 
     for (size_t i = 0; i < num_values; ++i)
     {

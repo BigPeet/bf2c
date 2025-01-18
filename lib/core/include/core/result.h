@@ -174,7 +174,7 @@
     error_type prefix##_expect_err(type_name const* result, char const* message)          \
     {                                                                                     \
         ABORT_IF(!result);                                                                \
-        LOG_AND_ABORT_IF(result->has_value, message);                                     \
+        LOG_MSG_AND_ABORT_IF(result->has_value, message);                                 \
         return result->storage.error;                                                     \
     }
 
