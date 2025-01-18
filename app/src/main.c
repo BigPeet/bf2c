@@ -67,7 +67,6 @@ int main(int argc, char* argv[])
         for (size_t i = 0; i < input_param->values_len; ++i)
         {
             printf("%s ", input_values[i].STRING_value); // unchecked
-            /*printf("%s ", cli_param_value_as_string(&input_values[i])); // checked (with panic)*/
         }
         printf("\n");
     }
