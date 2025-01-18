@@ -39,6 +39,7 @@ void cli_destroy(cli_t* cli);
 // 1. cli_get_param_by_*: Will abort if parameter is not found, always returns a non-null pointer.
 // 2. cli_try_get_param_by_*: Returns null if parameter is not found.
 // The second API might be replaced with a "result-based" API in the future.
+// TODO: If appropriate, add function which searches AND gets a value. Might lead to clutter/bloat.
 cli_param_t const* cli_get_param_by_name(cli_t const* cli, char const* name);
 cli_param_t const* cli_get_param_by_index(cli_t const* cli, size_t index);
 cli_param_t const* cli_get_param_by_short_form(cli_t const* cli, char short_form);

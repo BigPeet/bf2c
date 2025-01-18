@@ -62,36 +62,51 @@ cli_result_t cli_param_set_values(cli_param_t* param, size_t num_values, char** 
 void cli_param_destroy(cli_param_t* param);
 
 // Accessor functions
-// TODO: Accessors should have these general APIs available
-//
-// 1. UWRAP: Return the double/int/... value(s), panic on error.
-// 2. TRY: Write the double/int/... value(s) into OUT parameter, return false on error or a result
-//         Or introduce results for double/int/... and return those
-// 3. UNCHECKED: Return the double/int/... value(s) without checking for errors or UB
-// 4. GET_OR: Return the double/int/... value(s) or a default value
-//               Could be redundant with a return-result-based version for TRY
-//               cli_param_bool_res_unwrap_or(cli_param_get_bool(param), false);
-//               cli_param_get_bool_or(param, false);
+
+// Accessing the "raw" value(s) of the parameter (still owned by the parameter).
+// This is either the single value or the array of values.
+// This can be differentiated by the uses_multiple_values / values_len field of the parameter.
+cli_param_value_t const* cli_param_get_values(cli_param_t const* param);
 
 // Abort if the parameter does not contain the expected type
-double cli_param_unwrap_double(cli_param_t const* param);
-char const* cli_param_unwrap_string(cli_param_t const* param);
-int cli_param_unwrap_int(cli_param_t const* param);
-bool cli_param_unwrap_bool(cli_param_t const* param);
+double cli_param_get_double(cli_param_t const* param);
+char const* cli_param_get_string(cli_param_t const* param);
+int cli_param_get_int(cli_param_t const* param);
+bool cli_param_get_bool(cli_param_t const* param);
 
-double const* cli_param_unwrap_doubles(cli_param_t const* param);
-char const* const* cli_param_unwrap_strings(cli_param_t const* param);
-int const* cli_param_unwrap_ints(cli_param_t const* param);
-bool const* cli_param_unwrap_bools(cli_param_t const* param);
+// Abort if the parameter does not contain the expected type or is not an array
+// Returned arrays are owned by the caller and must be freed (but not their contents in case of
+// strings).
+// Might be NULL if the parameter does not contain any values.
+// Number of values is stored in the values_len field of the parameter.
+// TODO: Rename functions to make ownership clearer.
+double const* cli_param_get_doubles(cli_param_t const* param);
+char const** cli_param_get_strings(cli_param_t const* param);
+int const* cli_param_get_ints(cli_param_t const* param);
+bool const* cli_param_get_bools(cli_param_t const* param);
 
 
+// Return the value or a default value
+double cli_param_get_double_or(cli_param_t const* param, double value);
+char const* cli_param_get_string_or(cli_param_t const* param, char const* value);
+int cli_param_get_int_or(cli_param_t const* param, int value);
+bool cli_param_get_bool_or(cli_param_t const* param, bool value);
 
+// TODO: Add "_or" versions for the array types, if appropriate.
+
+// TODO: implement "TRY" versions of the above functions which either
+// - return a bool and take an out parameter to write into
+// - e.g. bool cli_param_try_get_double(cli_param_t const* param, double* out);
+// - return a result-type containing the value or error
+// - e.g. cli_double_res_t cli_param_get_double_res(cli_param_t const* param);
+
+// TODO: implement "unchecked" functions which return the value without checking
 
 
 // MACROs for convenience
 #define CLI_OPTION(name, short_form, param, type, default_val, desc)                        \
     {                                                                                       \
-        .contained = {.type##_value = (default_val)}, .values_len = 0, .long_name = (name), \
+        .contained = {.type##_value = (default_val)}, .values_len = 1, .long_name = (name), \
         .arg_name = (param), .description = (desc), .value_type = (type),                   \
         .short_name = (short_form), .uses_multiple_values = false,                          \
         .may_use_multiple_values = false, .is_positional = false, .is_set_by_user = false,  \
@@ -109,7 +124,7 @@ bool const* cli_param_unwrap_bools(cli_param_t const* param);
 
 #define CLI_POSITIONAL_ARG(name, type, default_val, desc)                                       \
     {                                                                                           \
-        .contained = {.type##_value = (default_val)}, .values_len = 0, .long_name = (name),     \
+        .contained = {.type##_value = (default_val)}, .values_len = 1, .long_name = (name),     \
         .arg_name = NULL, .description = (desc), .value_type = (type), .short_name = '\0',      \
         .uses_multiple_values = false, .may_use_multiple_values = false, .is_positional = true, \
         .is_set_by_user = false,                                                                \
