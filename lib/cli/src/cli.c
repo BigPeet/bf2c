@@ -280,3 +280,77 @@ cli_result_t cli_parse_args(cli_t const* cli, int argc, char** argv)
     }
     return parse_res;
 }
+
+cli_param_t const* cli_try_get_param_by_name(cli_t const* cli, char const* name)
+{
+    if (cli && name)
+    {
+        for (size_t i = 0; i < cli->parameters_len; ++i)
+        {
+            if (cli_param_same_long_name(&cli->parameters[i], name))
+            {
+                return &cli->parameters[i];
+            }
+        }
+    }
+    return NULL;
+}
+
+cli_param_t const* cli_get_param_by_name(cli_t const* cli, char const* name)
+{
+    ABORT_IF(!cli || !name);
+    cli_param_t const* const param = cli_try_get_param_by_name(cli, name);
+    if (!param)
+    {
+        LOG_AND_ABORT("Could not find parameter named '%s'.", name);
+    }
+    return param;
+}
+
+cli_param_t const* cli_try_get_param_by_index(cli_t const* cli, size_t index)
+{
+    if (cli && index < cli->parameters_len)
+    {
+        return &cli->parameters[index];
+    }
+    return NULL;
+}
+
+cli_param_t const* cli_get_param_by_index(cli_t const* cli, size_t index)
+{
+    ABORT_IF(!cli);
+    cli_param_t const* const param = cli_try_get_param_by_index(cli, index);
+    if (!param)
+    {
+        LOG_AND_ABORT("Parameter index %zu out of bounds. (Number of parameters: %zu)",
+                      index,
+                      cli->parameters_len);
+    }
+    return param;
+}
+
+cli_param_t const* cli_try_get_param_by_short_form(cli_t const* cli, char short_form)
+{
+    if (cli)
+    {
+        for (size_t i = 0; i < cli->parameters_len; ++i)
+        {
+            if (cli_param_same_short_name(&cli->parameters[i], short_form))
+            {
+                return &cli->parameters[i];
+            }
+        }
+    }
+    return NULL;
+}
+
+cli_param_t const* cli_get_param_by_short_form(cli_t const* cli, char short_form)
+{
+    ABORT_IF(!cli);
+    cli_param_t const* const param = cli_try_get_param_by_short_form(cli, short_form);
+    if (!param)
+    {
+        LOG_AND_ABORT("Could not find parameter with short form '%c'.", short_form);
+    }
+    return param;
+}

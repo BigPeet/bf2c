@@ -38,19 +38,38 @@ int main(int argc, char* argv[])
         }
     }
 
-    // TODO: implement better accessor functions
+    // TODO: how to improve? Do I want macros?
     cli_print_parameters(cli);
-    if (cli->parameters[6].contained.BOOL_value)
+    if (cli_param_get_bool(cli_get_param_by_name(cli, "help")))
     {
         cli_print_usage(cli);
     }
-    else if (cli->parameters[7].contained.BOOL_value)
+    else if (cli_param_get_bool_or(cli_get_param_by_short_form(cli, 'v'), false))
     {
         cli_print_version(cli);
     }
     else
     {
-        printf("Input specified: %s\n", cli->parameters[0].contained.STRING_value);
+        // Accessing multi-value param
+        cli_param_t const* const input_param = cli_get_param_by_short_form(cli, 'i');
+        char const** input                   = cli_param_get_strings(input_param);
+        printf("Input specified: ");
+        for (size_t i = 0; i < input_param->values_len; ++i)
+        {
+            printf("%s ", input[i]);
+        }
+        printf("\n");
+        free((void*) input);
+
+        // Raw approach (no additional allocation)
+        printf("(Raw) Input specified: ");
+        cli_param_value_t const* input_values = cli_param_get_values(input_param);
+        for (size_t i = 0; i < input_param->values_len; ++i)
+        {
+            printf("%s ", input_values[i].STRING_value); // unchecked
+            /*printf("%s ", cli_param_value_as_string(&input_values[i])); // checked (with panic)*/
+        }
+        printf("\n");
     }
 
     CLI_DEINIT();
