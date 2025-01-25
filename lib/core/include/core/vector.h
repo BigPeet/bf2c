@@ -10,45 +10,56 @@
 
 #include "core/abort.h"
 
-#define INTERNAL_FOR_EACH_SETUP(vector)                                                     \
-    for (size_t keep = 1, vector##_iterator = 0; vector##_iterator < (vector).size && keep; \
-         vector##_iterator++, keep          = !keep)
+#define INTERNAL_FOR_EACH_SETUP(elem, vector)                                           \
+    for (size_t keep = 1, elem##_iterator = 0; elem##_iterator < (vector).size && keep; \
+         elem##_iterator++, keep          = !keep)
 
 // NOLINTBEGIN(bugprone-macro-parentheses)
 #define VEC_FOR_EACH(value_type, elem, vector) \
-    INTERNAL_FOR_EACH_SETUP(vector)            \
-    for (value_type elem = (vector).data[vector##_iterator]; keep; keep = !keep)
+    INTERNAL_FOR_EACH_SETUP(elem, vector)      \
+    for (value_type elem = (vector).data[elem##_iterator]; keep; keep = !keep)
 
 #define VEC_FOR_EACH_REF(value_type, elem, vector) \
-    INTERNAL_FOR_EACH_SETUP(vector)                \
-    for (value_type* elem = (vector).data + vector##_iterator; keep; keep = !keep)
+    INTERNAL_FOR_EACH_SETUP(elem, vector)          \
+    for (value_type* elem = (vector).data + elem##_iterator; keep; keep = !keep)
 // NOLINTEND(bugprone-macro-parentheses)
 
+// Definitions for vector (dynamic array) data structure
+// - currently treats value_type as a "trivial" type
+// - managing memory for non-trivial types is left to the user
+// - e.g., if value_type is a pointer, the user is responsible for freeing the memory.
+
+// TODO: Think about how to accommodate "non-trivial" value_types, e.g. owning pointers.
+// E.g., should there be a "destroy" function that takes a pointer to a destructor function?
+// Or should it be possible to specify a destructor function when declaring the vector-type?
+// E.g., should there be a "copy" function that takes a pointer to a copy function?
 // TODO: Should "setters" take a pointer to the value?
 // E.g. void vector_push_back(vector_t* vector, value_t const* value);
 // TODO: Should there be a "contains" function for pointer equality (same object, not same value)?
 // TODO: Should clear use memset or just set size to 0?
 // TODO: Add "extend" functions
+// TODO: Add "copy" functions
 // TODO: Add "result-based" functions
-#define INTERNAL_VECTOR_DECLARE_FUNCTIONS(type_name, prefix, value_type, result_type) \
-    type_name prefix##_create(void);                                                  \
-    type_name prefix##_with_capacity(size_t capacity);                                \
-    type_name prefix##_from(value_type const* array, size_t len);                     \
-    void prefix##_destroy(type_name* vector);                                         \
-    void prefix##_clear(type_name* vector);                                           \
-    bool prefix##_is_empty(type_name const* vector);                                  \
-    bool prefix##_contains(type_name const* vector, value_type value);                \
-    size_t prefix##_find(type_name const* vector, value_type value);                  \
-    void prefix##_remove_if(type_name* vector, prefix##_predicate pred);              \
-    void prefix##_reserve(type_name* vector, size_t new_capacity);                    \
-    void prefix##_shrink_to_fit(type_name* vector);                                   \
-    void prefix##_push_front(type_name* vector, value_type value);                    \
-    void prefix##_push_back(type_name* vector, value_type value);                     \
-    value_type prefix##_pop_front(type_name* vector);                                 \
-    value_type prefix##_pop_back(type_name* vector);                                  \
-    value_type* prefix##_get(type_name* vector, size_t index);                        \
-    value_type const* prefix##_getc(type_name const* vector, size_t index);           \
-    void prefix##_remove(type_name* vector, size_t index);                            \
+#define INTERNAL_VECTOR_DECLARE_FUNCTIONS(type_name, prefix, value_type, result_type)    \
+    type_name prefix##_create(void);                                                     \
+    type_name prefix##_with_capacity(size_t capacity);                                   \
+    type_name prefix##_from(value_type const* array, size_t len);                        \
+    void prefix##_destroy(type_name* vector);                                            \
+    void prefix##_clear(type_name* vector);                                              \
+    bool prefix##_is_empty(type_name const* vector);                                     \
+    bool prefix##_contains(type_name const* vector, value_type value);                   \
+    size_t prefix##_find(type_name const* vector, value_type value);                     \
+    size_t prefix##_find_from(type_name const* vector, value_type value, size_t offset); \
+    void prefix##_remove_if(type_name* vector, prefix##_predicate pred);                 \
+    void prefix##_reserve(type_name* vector, size_t new_capacity);                       \
+    void prefix##_shrink_to_fit(type_name* vector);                                      \
+    void prefix##_push_front(type_name* vector, value_type value);                       \
+    void prefix##_push_back(type_name* vector, value_type value);                        \
+    value_type prefix##_pop_front(type_name* vector);                                    \
+    value_type prefix##_pop_back(type_name* vector);                                     \
+    value_type* prefix##_get(type_name* vector, size_t index);                           \
+    value_type const* prefix##_getc(type_name const* vector, size_t index);              \
+    void prefix##_remove(type_name* vector, size_t index);                               \
     void prefix##_insert(type_name* vector, size_t index, value_type value);
 
 #define VECTOR_DECLARE_WITH_PREFIX(type_name, prefix, value_type, result_type) \
@@ -123,8 +134,12 @@
     }                                                                                       \
     size_t prefix##_find(type_name const* vector, value_type value)                         \
     {                                                                                       \
+        return prefix##_find_from(vector, value, 0);                                        \
+    }                                                                                       \
+    size_t prefix##_find_from(type_name const* vector, value_type value, size_t offset)     \
+    {                                                                                       \
         ABORT_IF(!vector);                                                                  \
-        for (size_t i = 0; i < vector->size; i++)                                           \
+        for (size_t i = offset; i < vector->size; i++)                                      \
         {                                                                                   \
             if (vector->data[i] == value)                                                   \
             {                                                                               \

@@ -9,6 +9,7 @@
 
 #include "core/abort.h"
 #include "core/logging.h"
+#include "core/vector.h"
 
 // declare constant as enum
 enum
@@ -16,24 +17,17 @@ enum
     BUFFER_SIZE = 1024
 };
 
+VECTOR_DECLARE_AND_DEFINE_WITH_PREFIX(token_vec_t, token_vec, token_type, void)
+
 // FILE* -> char const*
 // char const* -> token*
 // token* -> command*
 // command* -> program*
-static token_type* bf2c_parse_tokens_from_file(FILE* file)
+static token_vec_t bf2c_parse_tokens_from_file(FILE* file)
 {
-    // TODO: move outside of function and add helper functions to
-    //       manage the linked list (add, free)
-    typedef struct token_list
-    {
-        token_type token;
-        struct token_list* next;
-    } token_list;
+    token_vec_t tokens = token_vec_create();
 
     char buffer[BUFFER_SIZE];
-    token_list* head = NULL;
-    token_list* cur  = NULL;
-    size_t token_cnt = 0;
     while (!feof(file))
     {
         size_t const ret_val = fread(buffer, sizeof(buffer[0]), BUFFER_SIZE, file);
@@ -42,59 +36,50 @@ static token_type* bf2c_parse_tokens_from_file(FILE* file)
             token_type token = bf2c_token_from_char(buffer[i]);
             if (token != TOKEN_COMMENT)
             {
-                token_list* new_token = malloc(sizeof(token_list));
-                ABORT_IF(!new_token);
-                new_token->token = token;
-                new_token->next  = NULL;
-                ++token_cnt;
-                if (head == NULL)
-                {
-                    head = new_token;
-                    cur  = head;
-                }
-                else
-                {
-                    cur->next = new_token;
-                    cur       = new_token;
-                }
+                token_vec_push_back(&tokens, token);
             }
-            // Use a linked list to store tokens during parsing
-            // count the number of tokens to allocate the correct amount of memory
-            // return the linked list as an array
         }
         if (ferror(file))
         {
             LOG_ERROR_MSG("Error reading file");
-            return NULL;
+            // OR Abort
+            // OR clear vector and return
+            token_vec_destroy(&tokens);
+            return token_vec_create();
         }
     }
-    cur = head;
-    printf("Parsed %zu tokens: ", token_cnt);
-    while (cur != NULL)
+    printf("Parsed %zu tokens: ", tokens.size);
+    VEC_FOR_EACH(token_type, tok, tokens)
     {
-        printf("%c", bf2c_token_to_char(cur->token));
-        cur = cur->next;
+        printf("%c", bf2c_token_to_char(tok));
     }
     printf("\n");
-    return NULL;
+    return tokens;
 }
 
 // OR return pointer
-static program_t bf2c_parse_program(token_type const* tokens)
+static program_t bf2c_parse_program(token_vec_t const* tokens)
 {
     // OR this function takes ownership of the tokens and frees them
-    (void) tokens;
-    /*return NULL;*/
+    VEC_FOR_EACH(token_type, tok, *tokens)
+    {
+        LOG_DEBUG("Parsing token: %c", bf2c_token_to_char(tok));
+        switch (tok) {
+          case TOKEN_PLUS:
+            break;
+          default:
+            break;
+        }
+    }
     return (program_t){0};
 }
 
 // OR return a result
 program_t bf2c_parse_file(FILE* file)
 {
-    token_type* tokens = bf2c_parse_tokens_from_file(file);
-    program_t program  = bf2c_parse_program(tokens);
-
-    free(tokens);
+    token_vec_t tokens = bf2c_parse_tokens_from_file(file);
+    program_t program  = bf2c_parse_program(&tokens);
+    token_vec_destroy(&tokens);
     return program;
 }
 
