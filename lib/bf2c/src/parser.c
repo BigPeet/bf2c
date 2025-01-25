@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "bf2c/command.h"
 #include "bf2c/program.h"
 #include "bf2c/token.h"
 
@@ -17,7 +18,7 @@ enum
     BUFFER_SIZE = 1024
 };
 
-VECTOR_DECLARE_AND_DEFINE_WITH_PREFIX(token_vec_t, token_vec, token_type, void)
+VECTOR_DECLARE_AND_DEFINE_WITH_PREFIX(token_vec_t, token_vec, token_type, void, TRIVIAL_COMP)
 
 // FILE* -> char const*
 // char const* -> token*
@@ -48,12 +49,6 @@ static token_vec_t bf2c_parse_tokens_from_file(FILE* file)
             return token_vec_create();
         }
     }
-    printf("Parsed %zu tokens: ", tokens.size);
-    VEC_FOR_EACH(token_type, tok, tokens)
-    {
-        printf("%c", bf2c_token_to_char(tok));
-    }
-    printf("\n");
     return tokens;
 }
 
@@ -61,17 +56,61 @@ static token_vec_t bf2c_parse_tokens_from_file(FILE* file)
 static program_t bf2c_parse_program(token_vec_t const* tokens)
 {
     // OR this function takes ownership of the tokens and frees them
-    VEC_FOR_EACH(token_type, tok, *tokens)
+    command_vec_t commands = command_vec_create();
+
+    size_t idx = 0;
+    while (idx < tokens->size)
     {
-        LOG_DEBUG("Parsing token: %c", bf2c_token_to_char(tok));
-        switch (tok) {
-          case TOKEN_PLUS:
-            break;
-          default:
-            break;
+        token_type tok   = tokens->data[idx];
+        command_type cur = bf2c_command_from_token(tok);
+        if (cur == COMMAND_TYPE_CHANGE_PTR || cur == COMMAND_TYPE_CHANGE_VAL)
+        {
+            // Match streaks of "additive" commands
+            int32_t value = bf2c_command_value(tok);
+            while (idx < tokens->size - 1 && bf2c_command_from_token(tokens->data[idx + 1]) == cur)
+            {
+                ++idx;
+                value += bf2c_command_value(tokens->data[idx]);
+            }
+            if (value != 0)
+            {
+                command_vec_push_back(&commands, (command_t){value, cur});
+            }
+        }
+        else
+        {
+            // Match non-"additive" commands
+            command_vec_push_back(&commands, (command_t){0, cur});
+        }
+        ++idx;
+    }
+
+    // Match loops
+    core_vec_size_t stack = core_vec_size_create();
+    for (size_t i = 0; i < commands.size; ++i)
+    {
+        command_type cur = commands.data[i].type;
+        if (cur == COMMAND_TYPE_LOOP_START)
+        {
+            core_vec_size_push_back(&stack, i);
+        }
+        else if (cur == COMMAND_TYPE_LOOP_END)
+        {
+            // TODO: return a result/error instead of aborting
+            LOG_AND_ABORT_IF(core_vec_size_is_empty(&stack), "Unmatched loop end at index %zu", i);
+            size_t start               = core_vec_size_pop_back(&stack);
+            int32_t const delta        = (int32_t) (i - start); // FIXME: potential data loss
+            commands.data[start].value = delta;
+            commands.data[i].value     = -delta;
         }
     }
-    return (program_t){0};
+    // TODO: return a result/error instead of aborting
+    // TODO: can we match this back to the original source or at least token?
+    LOG_AND_ABORT_IF(!core_vec_size_is_empty(&stack),
+                     "Unmatched loop start at index %zu",
+                     stack.data[0]);
+    core_vec_size_destroy(&stack);
+    return bf2c_program_create(commands);
 }
 
 // OR return a result

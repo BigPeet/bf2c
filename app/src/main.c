@@ -2,13 +2,13 @@
 #include <stdlib.h>
 
 #include "app/config.h"
+#include "bf2c/parser.h"
 #include "cli/cli.h"
 #include "cli/error_codes.h"
 #include "cli/param.h"
 #include "cli/result.h"
 #include "core/logging.h"
 #include "core/vector.h"
-#include "bf2c/parser.h"
 
 CLI_SETUP(
     PROJECT_NAME,
@@ -72,14 +72,9 @@ int main(int argc, char* argv[])
             printf("%s ", input_values[i].STRING_value); // unchecked
         }
         printf("\n");
-        core_vec_int_t vec = core_vec_int_create();
-        core_vec_int_push_back(&vec, 1);
-        VEC_FOR_EACH(int, val, vec)
-        {
-            printf("val = %d\n", val);
-        }
-        core_vec_int_destroy(&vec);
-        bf2c_parse_file(stdin);
+        program_t prog = bf2c_parse_file(stdin);
+        bf2c_program_print(&prog);
+        bf2c_program_destroy(&prog);
     }
 
     CLI_DEINIT();
