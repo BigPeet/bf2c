@@ -10,17 +10,17 @@
 
 #include "core/abort.h"
 
-#define INTERNAL_FOR_EACH_SETUP(elem, vector)                                           \
+#define INTERNAL_VECTOR_FOR_EACH_SETUP(elem, vector)                                    \
     for (size_t keep = 1, elem##_iterator = 0; elem##_iterator < (vector).size && keep; \
          elem##_iterator++, keep          = !keep)
 
 // NOLINTBEGIN(bugprone-macro-parentheses)
-#define VEC_FOR_EACH(value_type, elem, vector) \
-    INTERNAL_FOR_EACH_SETUP(elem, vector)      \
+#define VEC_FOR_EACH(value_type, elem, vector)   \
+    INTERNAL_VECTOR_FOR_EACH_SETUP(elem, vector) \
     for (value_type elem = (vector).data[elem##_iterator]; keep; keep = !keep)
 
 #define VEC_FOR_EACH_REF(value_type, elem, vector) \
-    INTERNAL_FOR_EACH_SETUP(elem, vector)          \
+    INTERNAL_VECTOR_FOR_EACH_SETUP(elem, vector)   \
     for (value_type* elem = (vector).data + elem##_iterator; keep; keep = !keep)
 // NOLINTEND(bugprone-macro-parentheses)
 
@@ -93,7 +93,7 @@
         LOG_MSG_AND_ABORT_IF(!array,                                                           \
                              "Given array is NULL. Use prefix##_with_capacity() instead.");    \
         type_name vector = prefix##_with_capacity(len);                                        \
-        memcpy(vector.data, array, len * sizeof(value_type));                                  \
+        memcpy((void*) vector.data, (void const*) array, len * sizeof(value_type));            \
         vector.size = len;                                                                     \
         return vector;                                                                         \
     }                                                                                          \
@@ -101,7 +101,7 @@
     {                                                                                          \
         if (vector)                                                                            \
         {                                                                                      \
-            free(vector->data);                                                                \
+            free((void*) vector->data);                                                        \
             vector->data     = NULL;                                                           \
             vector->size     = 0;                                                              \
             vector->capacity = 0;                                                              \
@@ -112,7 +112,7 @@
         ABORT_IF(!vector);                                                                     \
         if (vector->size > 0)                                                                  \
         {                                                                                      \
-            memset(vector->data, 0, vector->size * sizeof(value_type));                        \
+            memset((void*) vector->data, 0, vector->size * sizeof(value_type));                \
             vector->size = 0;                                                                  \
         }                                                                                      \
     }                                                                                          \
@@ -137,7 +137,9 @@
     {                                                                                          \
         return prefix##_find_from(vector, value, 0);                                           \
     }                                                                                          \
+    /* NOLINTBEGIN(bugprone-easily-swappable-parameters) */                                    \
     size_t prefix##_find_from(type_name const* vector, value_type value, size_t offset)        \
+    /* NOLINTEND(bugprone-easily-swappable-parameters) */                                      \
     {                                                                                          \
         ABORT_IF(!vector);                                                                     \
         for (size_t i = offset; i < vector->size; i++)                                         \
@@ -168,7 +170,8 @@
         {                                                                                      \
             return;                                                                            \
         }                                                                                      \
-        value_type* allocated = realloc(vector->data, new_capacity * sizeof(value_type));      \
+        value_type* allocated =                                                                \
+            (value_type*) realloc((void*) vector->data, new_capacity * sizeof(value_type));    \
         LOG_MSG_AND_ABORT_IF(!allocated, "Failed to allocate memory for vector.");             \
         vector->data     = allocated;                                                          \
         vector->capacity = new_capacity;                                                       \
@@ -182,12 +185,13 @@
         }                                                                                      \
         if (vector->size == 0)                                                                 \
         {                                                                                      \
-            free(vector->data);                                                                \
+            free((void*) vector->data);                                                        \
             vector->data     = NULL;                                                           \
             vector->capacity = 0;                                                              \
             return;                                                                            \
         }                                                                                      \
-        value_type* allocated = realloc(vector->data, vector->size * sizeof(value_type));      \
+        value_type* allocated =                                                                \
+            (value_type*) realloc((void*) vector->data, vector->size * sizeof(value_type));    \
         LOG_MSG_AND_ABORT_IF(!allocated, "Failed to allocate memory for vector.");             \
         vector->data     = allocated;                                                          \
         vector->capacity = vector->size;                                                       \

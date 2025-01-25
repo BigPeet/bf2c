@@ -2,7 +2,9 @@
 #include "bf2c/token.h"
 #include "core/vector.h"
 
-#define COMMAND_CMP(a, b) TRIVIAL_COMP(a.type, b.type)
+#include <stdint.h>
+
+#define COMMAND_CMP(a, b) TRIVIAL_COMP((a).type, (b).type)
 VECTOR_DEFINE_WITH_PREFIX(command_vec_t, command_vec, command_t, void, COMMAND_CMP)
 
 command_type bf2c_command_from_token(token_type token)

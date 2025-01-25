@@ -3,12 +3,12 @@
 
 #include "app/config.h"
 #include "bf2c/parser.h"
+#include "bf2c/program.h"
 #include "cli/cli.h"
 #include "cli/error_codes.h"
 #include "cli/param.h"
 #include "cli/result.h"
 #include "core/logging.h"
-#include "core/vector.h"
 
 CLI_SETUP(
     PROJECT_NAME,
