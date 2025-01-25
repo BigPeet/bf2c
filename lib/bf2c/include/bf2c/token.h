@@ -17,6 +17,7 @@ typedef enum token_type
 } token_type;
 
 token_type bf2c_token_from_char(char source);
+char bf2c_token_to_char(token_type token);
 
 
 #endif /* ifndef BF2C_TOKEN_H_ */

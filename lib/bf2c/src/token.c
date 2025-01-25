@@ -28,3 +28,33 @@ token_type bf2c_token_from_char(char source)
             return TOKEN_COMMENT;
     }
 }
+
+char bf2c_token_to_char(token_type token)
+{
+    switch (token)
+    {
+        case TOKEN_PLUS:
+            return '+';
+        case TOKEN_MINUS:
+            return '-';
+        case TOKEN_LEFT:
+            return '<';
+        case TOKEN_RIGHT:
+            return '>';
+        case TOKEN_LBRACKET:
+            return '[';
+        case TOKEN_RBRACKET:
+            return ']';
+        case TOKEN_PERIOD:
+            return '.';
+        case TOKEN_COMMA:
+            return ',';
+        case TOKEN_POUND:
+            return '#';
+        case TOKEN_EXCLAMATION:
+            return '!';
+        case TOKEN_COMMENT:
+            // null character, not printed by printf but may cause issues when used inside a string
+            return '\0';
+    }
+}

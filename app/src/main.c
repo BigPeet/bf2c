@@ -8,6 +8,7 @@
 #include "cli/result.h"
 #include "core/logging.h"
 #include "core/vector.h"
+#include "bf2c/parser.h"
 
 CLI_SETUP(
     PROJECT_NAME,
@@ -58,6 +59,7 @@ int main(int argc, char* argv[])
         for (size_t i = 0; i < input_param->values_len; ++i)
         {
             printf("%s ", input[i]);
+            bf2c_parse_filename(input[i]);
         }
         printf("\n");
         free((void*) input);
@@ -77,6 +79,7 @@ int main(int argc, char* argv[])
             printf("val = %d\n", val);
         }
         core_vec_int_destroy(&vec);
+        bf2c_parse_file(stdin);
     }
 
     CLI_DEINIT();
