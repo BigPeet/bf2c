@@ -4,6 +4,9 @@
 #include <stdbool.h>
 #include "core/abort.h"
 
+// TODO: Should "setters" take a pointer to the value/error?
+// E.g. void result_set_value(result_t* result, value_t const* value);
+
 #define INTERNAL_RESULT_DECLARE_VALUE_FUNCTIONS(type_name, prefix, value_type, error_type)       \
     type_name prefix##_create_from_value(value_type value);                                      \
     void prefix##_set_value(type_name* result, value_type value);                                \

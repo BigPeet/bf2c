@@ -7,6 +7,7 @@
 #include "cli/param.h"
 #include "cli/result.h"
 #include "core/logging.h"
+#include "core/vector.h"
 
 CLI_SETUP(
     PROJECT_NAME,
@@ -69,6 +70,13 @@ int main(int argc, char* argv[])
             printf("%s ", input_values[i].STRING_value); // unchecked
         }
         printf("\n");
+        core_vec_int_t vec = core_vec_int_create();
+        core_vec_int_push_back(&vec, 1);
+        VEC_FOR_EACH(int, val, vec)
+        {
+            printf("val = %d\n", val);
+        }
+        core_vec_int_destroy(&vec);
     }
 
     CLI_DEINIT();
