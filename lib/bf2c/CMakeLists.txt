@@ -5,6 +5,7 @@ set (BF2C_SOURCE_FILES
   src/parser.c
   src/command.c
   src/program.c
+  src/c_emitter.c
   )
 
 add_library(bf2c_lib STATIC ${BF2C_SOURCE_FILES})

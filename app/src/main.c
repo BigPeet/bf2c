@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "app/config.h"
+#include "bf2c/c_emitter.h"
 #include "bf2c/parser.h"
 #include "bf2c/program.h"
 #include "cli/cli.h"
@@ -41,7 +42,7 @@ int main(int argc, char* argv[])
     }
 
     // TODO: how to improve? Do I want macros?
-    cli_print_parameters(cli);
+    /*cli_print_parameters(cli);*/
     if (cli_param_get_bool(cli_get_param_by_name(cli, "help")))
     {
         cli_print_usage(cli);
@@ -55,25 +56,26 @@ int main(int argc, char* argv[])
         // Accessing multi-value param
         cli_param_t const* const input_param = cli_get_param_by_short_form(cli, 'i');
         char const** input                   = cli_param_get_strings(input_param);
-        printf("Input specified: ");
+        /*printf("Input specified: ");*/
         for (size_t i = 0; i < input_param->values_len; ++i)
         {
-            printf("%s ", input[i]);
+            /*printf("%s ", input[i]);*/
             bf2c_parse_filename(input[i]);
         }
-        printf("\n");
+        /*printf("\n");*/
         free((void*) input);
 
         // Raw approach (no additional allocation)
-        printf("(Raw) Input specified: ");
-        cli_param_value_t const* input_values = cli_param_get_values(input_param);
-        for (size_t i = 0; i < input_param->values_len; ++i)
-        {
-            printf("%s ", input_values[i].STRING_value); // unchecked
-        }
-        printf("\n");
+        /*printf("(Raw) Input specified: ");*/
+        /*cli_param_value_t const* input_values = cli_param_get_values(input_param);*/
+        /*for (size_t i = 0; i < input_param->values_len; ++i)*/
+        /*{*/
+        /*printf("%s ", input_values[i].STRING_value); // unchecked*/
+        /*}*/
+        /*printf("\n");*/
         program_t prog = bf2c_parse_file(stdin);
-        bf2c_program_print(&prog);
+        /*bf2c_program_print(&prog);*/
+        bf2c_emit_c_to_file(stdout, &prog);
         bf2c_program_destroy(&prog);
     }
 

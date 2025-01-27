@@ -2,7 +2,6 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "bf2c/command.h"
 #include "bf2c/program.h"
@@ -127,13 +126,13 @@ program_t bf2c_parse_file(FILE* file)
 program_t bf2c_parse_filename(char const* filename)
 {
     FILE* file = fopen(filename, "r");
-    if (file == NULL)
+    if (!file)
     {
         // TODO: return a result with error
         return (program_t){0};
     }
     LOG_DEBUG("Parsing file: %s", filename);
     program_t const program = bf2c_parse_file(file);
-    (void) fclose(file);
+    fclose(file);
     return program;
 }
