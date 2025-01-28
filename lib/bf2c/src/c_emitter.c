@@ -93,24 +93,24 @@ static bool bf2c_emit_command(FILE* file, command_t command, int* indentation_le
             }
             break;
         case COMMAND_TYPE_OUT:
-            strcpy(buffer, "printf(\"%c\", data[idx]);");
+            strncpy(buffer, "printf(\"%c\", data[idx]);", BUFFER_SIZE);
             break;
         case COMMAND_TYPE_IN:
-            strcpy(buffer, "(void) scanf(\"%c\", &data[idx]);");
+            strncpy(buffer, "(void) scanf(\"%c\", &data[idx]);", BUFFER_SIZE);
             break;
         case COMMAND_TYPE_LOOP_START:
-            strcpy(buffer, "while (data[idx]) {");
+            strncpy(buffer, "while (data[idx]) {", BUFFER_SIZE);
             ret = 1;
             break;
         case COMMAND_TYPE_LOOP_END:
-            strcpy(buffer, "}");
+            strncpy(buffer, "}", BUFFER_SIZE);
             --(*indentation_level);
             break;
         case COMMAND_TYPE_DEBUG:
-            strcpy(buffer, "debug(data, idx);");
+            strncpy(buffer, "debug(data, idx);", BUFFER_SIZE);
             break;
         case COMMAND_TYPE_UNKNOWN:
-            strcpy(buffer, "");
+            strncpy(buffer, "", BUFFER_SIZE);
     }
     int const res = fprintf(file, "%*c%s\n", INDENT_WIDTH * *indentation_level, ' ', buffer) >= 0;
     if (ret == 1)
