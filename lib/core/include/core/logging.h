@@ -45,6 +45,7 @@ void core_logging_set_level(core_logging_level_t level);
 // Macros intended to be used by the user
 
 #define LOGGING_INIT(level) core_logging_set_level(level)
+#define LOGGING_SET(level) core_logging_set_level(level)
 
 #define LOG_DEBUG(fmt, ...)                                               \
     do                                                                    \

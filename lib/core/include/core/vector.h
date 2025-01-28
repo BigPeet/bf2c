@@ -49,6 +49,7 @@
     void prefix##_clear(type_name* vector);                                              \
     bool prefix##_is_empty(type_name const* vector);                                     \
     bool prefix##_contains(type_name const* vector, value_type value);                   \
+    size_t prefix##_size(type_name const* vector);                                       \
     size_t prefix##_find(type_name const* vector, value_type value);                     \
     size_t prefix##_find_from(type_name const* vector, value_type value, size_t offset); \
     void prefix##_remove_if(type_name* vector, prefix##_predicate pred);                 \
@@ -132,6 +133,11 @@
             }                                                                                  \
         }                                                                                      \
         return false;                                                                          \
+    }                                                                                          \
+    size_t prefix##_size(type_name const* vector)                                              \
+    {                                                                                          \
+        ABORT_IF(!vector);                                                                     \
+        return vector->size;                                                                   \
     }                                                                                          \
     size_t prefix##_find(type_name const* vector, value_type value)                            \
     {                                                                                          \
