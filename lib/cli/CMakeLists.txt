@@ -1,3 +1,4 @@
+# CLI Library
 set(CLI_SOURCE_FILES
   src/cli.c
   src/error_codes.c

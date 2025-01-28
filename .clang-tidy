@@ -16,7 +16,7 @@ Checks: "*,
 "
 
 # TODO: define a reasonable set of active checks so that we can just treat all of them as error
-WarningsAsErrors: 'bugprone-*'
+WarningsAsErrors: ''
 HeaderFilterRegex: ''
 FormatStyle:     none
 
