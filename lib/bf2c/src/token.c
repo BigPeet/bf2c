@@ -57,4 +57,5 @@ char bf2c_token_to_char(token_type token)
             // null character, not printed by printf but may cause issues when used inside a string
             return '\0';
     }
+    return '\0'; // should be unreachable
 }

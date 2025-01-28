@@ -7,17 +7,11 @@ else
 	GENERATOR := "Ninja"
 endif
 
-ifeq (, ${CC})
-	C_COMPILER := ${CC}
-else
-	C_COMPILER := clang
-endif
-
-ifeq (, ${CXX})
-	CXX_COMPILER := ${CXX}
-else
-	CXX_COMPILER := clang
-endif
+# If CC is not specified, it will be populated by make to "cc".
+# In that case, I want to use "clang" instead.
+# But if it is user-specified, keep it as-is.
+CC := $(or $(filter-out cc,$(CC)),clang)
+CXX := $(or $(filter-out cc,$(CC)),clang)
 
 .PHONY: clang-configure gcc-configure clean build all check-format format lint
 
@@ -26,7 +20,7 @@ BINS := build/app/bf2c
 all: $(BINS)
 
 configure:
-	@cmake -S . -B build/ -G $(GENERATOR) -DCMAKE_C_COMPILER=$(C_COMPILER) -DCMAKE_CXX_COMPILER=$(CXX_COMPILER)
+	@cmake -S . -B build/ -G $(GENERATOR) -DCMAKE_C_COMPILER=$(CC) -DCMAKE_CXX_COMPILER=$(CXX)
 
 # technically, CMakeCache.txt or build.ninja would be a better indicator...
 build/compile_commands.json: configure

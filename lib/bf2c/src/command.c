@@ -31,6 +31,7 @@ command_type bf2c_command_from_token(token_type token)
         case TOKEN_COMMENT:
             return COMMAND_TYPE_UNKNOWN;
     }
+    return COMMAND_TYPE_UNKNOWN; // should be unreachable
 }
 
 int32_t bf2c_command_value(token_type token)
@@ -69,4 +70,5 @@ char const* bf2c_command_type_to_string(command_type type)
         case COMMAND_TYPE_UNKNOWN:
             return "UNKNOWN";
     }
+    return "UNKNOWN"; // should be unreachable
 }
