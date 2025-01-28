@@ -21,6 +21,12 @@ endif()
 include(cmake/CompilerWarnings.cmake)
 add_library(project_warnings INTERFACE)
 set_project_warnings(project_warnings WARNINGS_AS_ERRORS "" "" "" "")
+if (MSVC)
+  # Add define to disable MSVC security warnings.
+  # MSVC will warn about using "unsafe" functions like strcpy.
+  # But the suggested alternative (strcpy_s) is not available in C99.
+  target_compile_definitions(project_warnings INTERFACE _CRT_SECURE_NO_WARNINGS)
+endif()
 
 add_subdirectory(lib)
 add_subdirectory(app)

@@ -92,25 +92,27 @@ static bool bf2c_emit_command(FILE* file, command_t command, int* indentation_le
                 return false;
             }
             break;
+        // strcpy is fine here, because all the string literals are constant
+        // and known to be shorter than the buffer size.
         case COMMAND_TYPE_OUT:
-            strncpy(buffer, "printf(\"%c\", data[idx]);", BUFFER_SIZE);
+            strcpy(buffer, "printf(\"%c\", data[idx]);");
             break;
         case COMMAND_TYPE_IN:
-            strncpy(buffer, "(void) scanf(\"%c\", &data[idx]);", BUFFER_SIZE);
+            strcpy(buffer, "(void) scanf(\"%c\", &data[idx]);");
             break;
         case COMMAND_TYPE_LOOP_START:
-            strncpy(buffer, "while (data[idx]) {", BUFFER_SIZE);
+            strcpy(buffer, "while (data[idx]) {");
             ret = 1;
             break;
         case COMMAND_TYPE_LOOP_END:
-            strncpy(buffer, "}", BUFFER_SIZE);
+            strcpy(buffer, "}");
             --(*indentation_level);
             break;
         case COMMAND_TYPE_DEBUG:
-            strncpy(buffer, "debug(data, idx);", BUFFER_SIZE);
+            strcpy(buffer, "debug(data, idx);");
             break;
         case COMMAND_TYPE_UNKNOWN:
-            strncpy(buffer, "", BUFFER_SIZE);
+            strcpy(buffer, "");
     }
     int const res = fprintf(file, "%*c%s\n", INDENT_WIDTH * *indentation_level, ' ', buffer) >= 0;
     if (ret == 1)
