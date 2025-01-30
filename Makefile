@@ -7,28 +7,51 @@ else
 	GENERATOR := "Ninja"
 endif
 
-# If CC is not specified, it will be populated by make to "cc".
-# In that case, I want to use "clang" instead.
-# But if it is user-specified, keep it as-is.
-CC := $(or $(filter-out cc,$(CC)),clang)
-CXX := $(or $(filter-out cc,$(CC)),clang)
+ifeq (, $(shell command -v clang))
+	COMPILER := "cc"
+else
+	COMPILER := "clang"
+endif
 
-.PHONY: clang-configure gcc-configure clean build all check-format format lint
+BUILD_TYPE := "Release"
+
+# If CC is not specified, it will be populated by make to "cc".
+# In that case, I want to use "clang" (if available) instead.
+# But if it is user-specified, keep it as-is.
+CC := $(or $(filter-out cc,$(CC)),$(COMPILER))
+CXX := $(or $(filter-out cc,$(CC)),$(COMPILER))
+
+.PHONY: all enable-debug debug release configure build install clean check-format format lint
 
 BINS := build/app/bf2c
 
 all: $(BINS)
 
+$(BINS): build
+
+debug: enable-debug configure $(BINS)
+
+enable-debug:
+	$(eval BUILD_TYPE := "Debug")
+
+release: all
+
 configure:
-	@cmake -S . -B build/ -G $(GENERATOR) -DCMAKE_C_COMPILER=$(CC) -DCMAKE_CXX_COMPILER=$(CXX)
+	@cmake -S . -B build/ -G $(GENERATOR) \
+		-DCMAKE_C_COMPILER=$(CC) \
+		-DCMAKE_CXX_COMPILER=$(CXX) \
+		-DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
 
 # technically, CMakeCache.txt or build.ninja would be a better indicator...
 build/compile_commands.json: configure
 
 build: build/compile_commands.json
-	@cmake --build build/
+	@cmake --build build/ --parallel
 
-$(BINS): build
+$(INSTALL_FILE): configure
+
+install: $(BINS)
+	@cmake --install build/
 
 clean:
 	@if [ -d build/ ]; then rm -rf build; fi
