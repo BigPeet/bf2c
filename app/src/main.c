@@ -19,6 +19,7 @@ CLI_SETUP(
     "A Brainfuck to C transpiler",
     CLI_POSITIONAL_ARG("input", STRING, NULL, "\tInput file. Uses stdin, if not provided."),
     CLI_OPTION("output", 'o', "FILE", STRING, NULL, "\tOutput file. Uses stdout, if not provided."),
+    CLI_OPTION("text", 't', "CODE", STRING, NULL, "\tInput Brainfuck code as a string."),
     COMMON_OPTIONS())
 
 int main(int argc, char* argv[])
@@ -61,9 +62,12 @@ int main(int argc, char* argv[])
     {
         char const* input_file  = cli_param_get_string(cli_get_param_by_name(cli, "input"));
         char const* output_file = cli_param_get_string(cli_get_param_by_name(cli, "output"));
-        LOG_DEBUG("Input file: %s", input_file ? input_file : "stdin");
-        LOG_DEBUG("Output file: %s", output_file ? output_file : "stdout");
-        program_t prog = input_file ? bf2c_parse_filename(input_file) : bf2c_parse_file(stdin);
+        char const* text        = cli_param_get_string(cli_get_param_by_name(cli, "text"));
+        LOG_DEBUG("Input: %s", input_file ? input_file : text ? "text" : "stdin");
+        LOG_DEBUG("Output: %s", output_file ? output_file : "stdout");
+        program_t prog = input_file ? bf2c_parse_file_by_name(input_file)
+                         : text     ? bf2c_parse_text(text)
+                                    : bf2c_parse_file(stdin);
         return_value   = output_file ? bf2c_emit_c_to_filename(output_file, &prog)
                                      : bf2c_emit_c_to_file(stdout, &prog);
 

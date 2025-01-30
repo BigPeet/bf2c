@@ -6,6 +6,7 @@
 
 // program_t* bf2c_parse_file(FILE* file); OR a RESULT
 program_t bf2c_parse_file(FILE* file);
-program_t bf2c_parse_filename(char const* filename);
+program_t bf2c_parse_file_by_name(char const* filename);
+program_t bf2c_parse_text(char const* text);
 
 #endif /* ifndef BF2C_PARSER_H_ */

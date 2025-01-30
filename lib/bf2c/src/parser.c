@@ -51,6 +51,21 @@ static token_vec_t bf2c_parse_tokens_from_file(FILE* file)
     return tokens;
 }
 
+static token_vec_t bf2c_parse_tokens_from_text(char const* text)
+{
+    token_vec_t tokens    = token_vec_create();
+    size_t const text_len = strlen(text);
+    for (size_t i = 0; i < text_len; ++i)
+    {
+        token_type token = bf2c_token_from_char(text[i]);
+        if (token != TOKEN_COMMENT)
+        {
+            token_vec_push_back(&tokens, token);
+        }
+    }
+    return tokens;
+}
+
 // OR return pointer
 static program_t bf2c_parse_program(token_vec_t const* tokens)
 {
@@ -123,7 +138,7 @@ program_t bf2c_parse_file(FILE* file)
 
 // TODO: add result for program_t with parser errors as error type
 // OR return a result
-program_t bf2c_parse_filename(char const* filename)
+program_t bf2c_parse_file_by_name(char const* filename)
 {
     FILE* file = fopen(filename, "r");
     if (!file)
@@ -134,5 +149,13 @@ program_t bf2c_parse_filename(char const* filename)
     LOG_DEBUG("Parsing file: %s", filename);
     program_t const program = bf2c_parse_file(file);
     fclose(file);
+    return program;
+}
+
+program_t bf2c_parse_text(char const* text)
+{
+    token_vec_t tokens = bf2c_parse_tokens_from_text(text);
+    program_t program  = bf2c_parse_program(&tokens);
+    token_vec_destroy(&tokens);
     return program;
 }
