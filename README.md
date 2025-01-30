@@ -13,7 +13,7 @@ The implementation is based on [this reference](https://brainfuck.org/brainfuck.
 
 ## Why?
 
-Firstly because I find Brainfuck hard to read.
+Firstly, because I find Brainfuck hard to read.
 Straight up compiling it to look at the resulting machine code or assembly does not make things easier.
 Transpiling it into C helps me to read (not necessarily understand) Brainfuck programs more easily.
 
