@@ -59,13 +59,14 @@ jobs:
       run: cmake --install ${{ steps.strings.outputs.build-output-dir }} --config Release
 
     - name: Package
+      working-directory: ${{steps.strings.outputs.install-dir }}
       shell: pwsh # use powershell to get easy access to 7z AND zip on all OS.
       run: |
           if ($env:RUNNER_OS -eq "Windows") {
-            7z a -w${{ steps.strings.outputs.install-dir }} bf2c-${{ matrix.os }}.zip bfc2.exe
+            7z a bf2c-${{ matrix.os }}.zip .\bfc2.exe
           }
           else {
-            zip -j ${{ steps.strings.outputs.install-dir }}/bf2c-${{ matrix.os }}.zip ${{ steps.strings.outputs.install-dir }}/bf2c
+            zip bf2c-${{ matrix.os }}.zip bf2c
           }
 
     - name: Upload Build Artifacts
