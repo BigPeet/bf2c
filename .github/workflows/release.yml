@@ -59,10 +59,11 @@ jobs:
       run: cmake --install ${{ steps.strings.outputs.build-output-dir }} --config Release
 
     - name: Package
-      working-directory: ${{steps.strings.outputs.install-dir }}
+      working-directory: ${{ steps.strings.outputs.install-dir }}
       shell: pwsh # use powershell to get easy access to 7z AND zip on all OS.
       run: |
           if ($env:RUNNER_OS -eq "Windows") {
+            ls
             7z a bf2c-${{ matrix.os }}.zip .\bfc2.exe
           }
           else {
