@@ -15,6 +15,11 @@ endif()
 include(cmake/PreventInSourceBuilds.cmake)
 
 
+# If build type is release then disable logging prefix
+if((NOT LOGGING_NO_PREFIX) AND (${CMAKE_BUILD_TYPE} STREQUAL "Release"))
+  set(LOGGING_NO_PREFIX ON)
+endif()
+
 # Project specific definitions TODO: move into more suitable file
 if(${LOGGING_NO_PREFIX})
   add_definitions(-DLOGGING_NO_PREFIX=${LOGGING_NO_PREFIX})
