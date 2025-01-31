@@ -68,6 +68,8 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
     - name: Dowload artifacts
       uses: actions/download-artifact@v4
