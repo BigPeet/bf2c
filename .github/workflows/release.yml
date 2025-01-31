@@ -62,10 +62,10 @@ jobs:
       shell: pwsh # use powershell to get easy access to 7z AND zip on all OS.
       run: |
           if ($env:RUNNER_OS -eq "Windows") {
-            7z a  ${{ steps.strings.outputs.install-dir }}/bf2c-${{ matrix.os }}.zip ${{ steps.strings.outputs.install-dir }}/bfc2.exe
+            7z a -w${{ steps.strings.outputs.install-dir }} bf2c-${{ matrix.os }}.zip bfc2.exe
           }
           else {
-            zip -r ${{ steps.strings.outputs.install-dir }}/bf2c-${{ matrix.os }}.zip ${{ steps.strings.outputs.install-dir }}/bf2c
+            zip -j ${{ steps.strings.outputs.install-dir }}/bf2c-${{ matrix.os }}.zip ${{ steps.strings.outputs.install-dir }}/bf2c
           }
 
     - name: Upload Build Artifacts
