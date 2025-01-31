@@ -64,7 +64,7 @@ jobs:
       run: |
           if ($env:RUNNER_OS -eq "Windows") {
             ls
-            7z a bf2c-${{ matrix.os }}.zip .\bfc2.exe
+            7z a bf2c-${{ matrix.os }}.zip bf2c.exe
           }
           else {
             zip bf2c-${{ matrix.os }}.zip bf2c
