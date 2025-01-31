@@ -3,6 +3,7 @@
 
 #include "app/config.h"
 #include "bf2c/c_emitter.h"
+#include "bf2c/optimize.h"
 #include "bf2c/parser.h"
 #include "bf2c/program.h"
 #include "cli/cli.h"
@@ -88,8 +89,9 @@ int main(int argc, char* argv[])
         program_t prog = input_file ? bf2c_parse_file_by_name(input_file)
                          : text     ? bf2c_parse_text(text)
                                     : bf2c_parse_file(stdin);
-        return_value   = output_file ? bf2c_emit_c_to_filename(output_file, &prog)
-                                     : bf2c_emit_c_to_file(stdout, &prog);
+        bf2c_optimize(&prog, BF2C_OPTIMIZATION_LEVEL_MEDIUM);
+        return_value = output_file ? bf2c_emit_c_to_filename(output_file, &prog)
+                                   : bf2c_emit_c_to_file(stdout, &prog);
 
         bf2c_program_destroy(&prog);
     }

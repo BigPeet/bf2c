@@ -1,11 +1,12 @@
 # BF2C library
 
 set (BF2C_SOURCE_FILES
-  src/token.c
-  src/parser.c
-  src/command.c
-  src/program.c
   src/c_emitter.c
+  src/command.c
+  src/optimize.c
+  src/parser.c
+  src/program.c
+  src/token.c
   )
 
 add_library(bf2c_lib STATIC ${BF2C_SOURCE_FILES})

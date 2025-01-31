@@ -43,6 +43,7 @@
     type_name prefix##_create(void);                                                     \
     type_name prefix##_with_capacity(size_t capacity);                                   \
     type_name prefix##_from(value_type const* array, size_t len);                        \
+    type_name prefix##_copy(type_name const* vector);                                    \
     void prefix##_destroy(type_name* vector);                                            \
     void prefix##_clear(type_name* vector);                                              \
     bool prefix##_is_empty(type_name const* vector);                                     \
@@ -95,6 +96,11 @@
         memcpy((void*) vector.data, (void const*) array, len * sizeof(value_type));            \
         vector.size = len;                                                                     \
         return vector;                                                                         \
+    }                                                                                          \
+    type_name prefix##_copy(type_name const* vector)                                           \
+    {                                                                                          \
+        ABORT_IF(!vector);                                                                     \
+        return prefix##_from(vector->data, vector->size);                                      \
     }                                                                                          \
     void prefix##_destroy(type_name* vector)                                                   \
     {                                                                                          \

@@ -48,7 +48,8 @@ function(
         -Wnull-dereference # warn if a null dereference is detected
         -Wdouble-promotion # warn if float is implicit promoted to double
         -Wformat=2 # warn on security issues around functions that format output (ie printf)
-        -Wimplicit-fallthrough # warn on statements that fallthrough without an explicit annotation
+        # on C99, there is no standard way to annotate an explicit fallthrough
+        #-Wimplicit-fallthrough # warn on statements that fallthrough without an explicit annotation
     )
   endif()
 
