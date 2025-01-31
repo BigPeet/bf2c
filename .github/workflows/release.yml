@@ -58,11 +58,21 @@ jobs:
     - name: Install
       run: cmake --install ${{ steps.strings.outputs.build-output-dir }} --config Release
 
+    - name: Package
+      shell: pwsh # use powershell to get easy access to 7z AND zip on all OS.
+      run: |
+          if ($env:RUNNER_OS -eq "Windows") {
+            7z a  ${{ steps.strings.outputs.install-dir }}/bf2c-${{ matrix.os }}.zip ${{ steps.strings.outputs.install-dir }}/bfc2.exe
+          }
+          else {
+            zip -r ${{ steps.strings.outputs.install-dir }}/bf2c-${{ matrix.os }}.zip ${{ steps.strings.outputs.install-dir }}/bf2c
+          }
+
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: bf2c-${{ matrix.os }}
-        path: ${{ steps.strings.outputs.install-dir }}/bf2c*
+        path: ${{ steps.strings.outputs.install-dir }}/bf2c-${{ matrix.os }}.zip
         retention-days: 7
         
   release:
