@@ -6,7 +6,7 @@ A Brainfuck to C transpiler
 
 ## What?
 
-*[Brainfuck is an esoteric programming language created in 1993 by Swiss student Urban Müller.](https://en.wikipedia.org/wiki/Brainfuck)*
+*[Brainfuck is an esoteric programming language created in 1993 by Swiss student Urban Müller.](https://en.wikipedia.org/wiki/Brainfuck)*    
 This is project is a [transpiler](https://en.wikipedia.org/wiki/Source-to-source_compiler) which translates Brainfuck code to equivalent C code.
 
 The implementation is based on [this reference](https://brainfuck.org/brainfuck.html) on [brainfuck.org](https://brainfuck.org).
