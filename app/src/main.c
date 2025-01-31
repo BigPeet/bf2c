@@ -65,6 +65,11 @@ int main(int argc, char* argv[])
         char const* text        = cli_param_get_string(cli_get_param_by_name(cli, "text"));
         LOG_DEBUG("Input: %s", input_file ? input_file : text ? "text" : "stdin");
         LOG_DEBUG("Output: %s", output_file ? output_file : "stdout");
+        bool const uses_stdin = !input_file && !text;
+        if (uses_stdin)
+        {
+            LOG_INFO_MSG("Reading from stdin. Press Ctrl+D to finish.");
+        }
         program_t prog = input_file ? bf2c_parse_file_by_name(input_file)
                          : text     ? bf2c_parse_text(text)
                                     : bf2c_parse_file(stdin);
