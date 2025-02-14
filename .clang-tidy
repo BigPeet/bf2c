@@ -1,19 +1,22 @@
 ---
-Checks: "*,
-        -abseil-*,
-        -altera-*,
-        -android-*,
-        -fuchsia-*,
-        -google-*,
-        -llvm*,
-        -modernize-use-trailing-return-type,
-        -zircon-*,
-        -readability-static-accessed-through-instance,
-        -readability-avoid-const-params-in-decls,
-        -readability-function-cognitive-complexity,
-        -cppcoreguidelines-non-private-member-variables-in-classes,
-        -misc-non-private-member-variables-in-classes,
-"
+Checks:
+  - "*"
+  - -abseil-*
+  - -altera-*
+  - -android-*
+  - -fuchsia-*
+  - -google-*
+  - -llvm*
+  - -modernize-use-trailing-return-type
+  - -zircon-*
+  - -readability-static-accessed-through-instance
+  - -readability-avoid-const-params-in-decls
+  - -readability-function-cognitive-complexity
+  - -cppcoreguidelines-non-private-member-variables-in-classes
+  - -misc-non-private-member-variables-in-classes
+  # redundant aliases
+  - -cppcoreguidelines-avoid-magic-numbers
+
 
 # TODO: define a reasonable set of active checks so that we can just treat all of them as error
 WarningsAsErrors: ''
@@ -25,8 +28,9 @@ CheckOptions:
     value: 'i|x|y|z'
   - key: readability-identifier-length.IgnoredParameterNames
     value: 'x|y|z'
+  - key: readability-magic-numbers.IgnoredIntegerValues
+    value: '0;1;2;3;4;10;100;255'
+  - key: readability-magic-numbers.IgnorePowersOf2IntegerValues
+    value: true
 
-
-
-
-
+...

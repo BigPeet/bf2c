@@ -56,6 +56,7 @@ install: $(BINS)
 clean:
 	@if [ -d build/ ]; then rm -rf build; fi
 	@if [ -d bin/ ]; then rm -rf bin; fi
+	@if [ -f a.out ]; then rm a.out; fi
 
 check-format:
 	@find lib/ app/ -name "*.c" -or -name "*.h" -or -name "*.cpp" | xargs clang-format --dry-run -Werror

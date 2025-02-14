@@ -19,13 +19,14 @@ enum
 
 VECTOR_DECLARE_AND_DEFINE_WITH_PREFIX(token_vec_t, token_vec, token_type, void, TRIVIAL_COMP)
 
-// FILE* -> char const*
-// char const* -> token*
-// token* -> command*
-// command* -> program*
 static token_vec_t bf2c_parse_tokens_from_file(FILE* file)
 {
     token_vec_t tokens = token_vec_create();
+    if (!file)
+    {
+        // no input, return empty vector
+        return tokens;
+    }
 
     char buffer[BUFFER_SIZE];
     while (!feof(file))
@@ -53,11 +54,17 @@ static token_vec_t bf2c_parse_tokens_from_file(FILE* file)
 
 static token_vec_t bf2c_parse_tokens_from_text(char const* text)
 {
-    token_vec_t tokens    = token_vec_create();
-    size_t const text_len = strlen(text);
-    for (size_t i = 0; i < text_len; ++i)
+    token_vec_t tokens = token_vec_create();
+    if (!text)
     {
-        token_type token = bf2c_token_from_char(text[i]);
+        // no input, return empty vector
+        return tokens;
+    }
+
+    char cur = 0;
+    while ((cur = *text++))
+    {
+        token_type token = bf2c_token_from_char(cur);
         if (token != TOKEN_COMMENT)
         {
             token_vec_push_back(&tokens, token);
