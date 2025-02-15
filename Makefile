@@ -67,3 +67,6 @@ format:
 
 lint: build/compile_commands.json
 	@find lib/ app/ -name "*.c" -or -name "*.cpp" | xargs run-clang-tidy -quiet -p build/ -use-color 1
+
+fixes: build/compile_commands.json
+	@find lib/ app/ -name "*.c" -or -name "*.cpp" | xargs run-clang-tidy -quiet -p build/ -use-color 1 -fix

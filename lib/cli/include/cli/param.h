@@ -9,10 +9,14 @@ union cli_param_value_t;
 
 typedef union cli_param_value_t
 {
+    // NOLINTBEGIN(readability-identifier-naming)
+    // Deviating from naming convention to match the naming of the types.
+    // This is used in MACROs to initialize/select the correct value.
     double DOUBLE_value;
     char const* STRING_value;
     int INT_value;
     bool BOOL_value;
+    // NOLINTEND(readability-identifier-naming)
 
     // Alternatively, we could store arrays of the specific types.
     // That COULD be more efficient, but would make the API more complex.

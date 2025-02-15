@@ -1,7 +1,7 @@
 #ifndef BF2C_TOKEN_H_
 #define BF2C_TOKEN_H_
 
-typedef enum token_type
+typedef enum token_type_t
 {
     TOKEN_PLUS,
     TOKEN_MINUS,
@@ -14,10 +14,10 @@ typedef enum token_type
     TOKEN_POUND,
     TOKEN_EXCLAMATION,
     TOKEN_COMMENT,
-} token_type;
+} token_type_t;
 
-token_type bf2c_token_from_char(char source);
-char bf2c_token_to_char(token_type token);
+token_type_t bf2c_token_from_char(char source);
+char bf2c_token_to_char(token_type_t token);
 
 
 #endif /* ifndef BF2C_TOKEN_H_ */

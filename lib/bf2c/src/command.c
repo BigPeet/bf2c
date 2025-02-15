@@ -7,7 +7,7 @@
 #define COMMAND_CMP(a, b) TRIVIAL_COMP((a).type, (b).type)
 VECTOR_DEFINE_WITH_PREFIX(command_vec_t, command_vec, command_t, void, COMMAND_CMP)
 
-command_type bf2c_command_from_token(token_type token)
+command_type_t bf2c_command_from_token(token_type_t token)
 {
     switch (token)
     {
@@ -34,7 +34,7 @@ command_type bf2c_command_from_token(token_type token)
     return COMMAND_TYPE_UNKNOWN; // should be unreachable
 }
 
-int32_t bf2c_command_value(token_type token)
+int32_t bf2c_command_value(token_type_t token)
 {
     switch (token)
     {
@@ -49,7 +49,7 @@ int32_t bf2c_command_value(token_type token)
     }
 }
 
-char const* bf2c_command_type_to_string(command_type type)
+char const* bf2c_command_type_to_string(command_type_t type)
 {
     switch (type)
     {
