@@ -148,6 +148,6 @@ bool bf2c_emit_c_to_filename(char const* filename, program_t const* program)
         return false;
     }
     bool result = bf2c_emit_c_to_file(file, program);
-    fclose(file);
+    (void) fclose(file);
     return result;
 }

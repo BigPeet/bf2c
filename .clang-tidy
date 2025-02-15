@@ -4,6 +4,7 @@ Checks:
   # clang diagnstic and analyzer
   - clang-diagnostic-*
   - clang-analyzer-*
+  - -clang-analyzer-deadcode.DeadStores
   # bugprone
   - bugprone-*
   - -bugprone-argument-comment
@@ -116,9 +117,9 @@ Checks:
   # Disabled for C
   # - -cppcoreguidelines-pro-type-union-access
 
+# clang-analyzer checks are not always reliable.
+WarningsAsErrors: '*,-clang-analyzer-*'
 
-# TODO: define a reasonable set of active checks so that we can just treat all of them as error
-WarningsAsErrors: ''
 HeaderFilterRegex: 'bf2c/(app|lib)'
 FormatStyle: file
 
@@ -205,7 +206,7 @@ CheckOptions:
   - key: cppcoreguidelines-avoid-do-while.IgnoreMacros
     value: true
   - key: cppcoreguidelines-avoid-non-const-global-variables.AllowInternalLinkage
-    value: true
+    value: false
   - key: readability-identifier-length.IgnoredVariableNames
     value: 'a|b|c|i|j|k|x|y|z'
   - key: readability-magic-numbers.IgnoredIntegerValues

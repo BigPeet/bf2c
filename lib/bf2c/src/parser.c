@@ -155,7 +155,7 @@ program_t bf2c_parse_file_by_name(char const* filename)
     }
     LOG_DEBUG("Parsing file: %s", filename);
     program_t const program = bf2c_parse_file(file);
-    fclose(file);
+    (void) fclose(file);
     return program;
 }
 

@@ -14,7 +14,6 @@
     for (size_t keep = 1, elem##_iterator = 0; elem##_iterator < (vector).size && keep; \
          elem##_iterator++, keep          = !keep)
 
-// NOLINTBEGIN(bugprone-macro-parentheses)
 #define VEC_FOR_EACH(value_type, elem, vector)   \
     INTERNAL_VECTOR_FOR_EACH_SETUP(elem, vector) \
     for (value_type elem = (vector).data[elem##_iterator]; keep; keep = !keep)
@@ -22,7 +21,6 @@
 #define VEC_FOR_EACH_REF(value_type, elem, vector) \
     INTERNAL_VECTOR_FOR_EACH_SETUP(elem, vector)   \
     for (value_type* elem = (vector).data + elem##_iterator; keep; keep = !keep)
-// NOLINTEND(bugprone-macro-parentheses)
 
 // Definitions for vector (dynamic array) data structure
 // - currently treats value_type as a "trivial" type
@@ -143,9 +141,8 @@
     {                                                                                          \
         return prefix##_find_from(vector, value, 0);                                           \
     }                                                                                          \
-    /* NOLINTBEGIN(bugprone-easily-swappable-parameters) */                                    \
+    /* NOLINTNEXTLINE(bugprone-easily-swappable-parameters) */                                 \
     size_t prefix##_find_from(type_name const* vector, value_type value, size_t offset)        \
-    /* NOLINTEND(bugprone-easily-swappable-parameters) */                                      \
     {                                                                                          \
         ABORT_IF(!vector);                                                                     \
         for (size_t i = offset; i < vector->size; i++)                                         \
