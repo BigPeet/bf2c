@@ -14,7 +14,7 @@
 void cli_print_error(cli_error_t const* error)
 {
     ABORT_IF(!error);
-    char* msg = "Unkown error"; // NOLINT
+    char* msg = "Unkown error";
     switch (error->error_code)
     {
         case CLI_ERROR:

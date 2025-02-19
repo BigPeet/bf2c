@@ -56,6 +56,7 @@ install: $(BINS)
 clean:
 	@if [ -d build/ ]; then rm -rf build; fi
 	@if [ -d bin/ ]; then rm -rf bin; fi
+	@if [ -f a.out ]; then rm a.out; fi
 
 check-format:
 	@find lib/ app/ -name "*.c" -or -name "*.h" -or -name "*.cpp" | xargs clang-format --dry-run -Werror
@@ -66,3 +67,6 @@ format:
 
 lint: build/compile_commands.json
 	@find lib/ app/ -name "*.c" -or -name "*.cpp" | xargs run-clang-tidy -quiet -p build/ -use-color 1
+
+fixes: build/compile_commands.json
+	@find lib/ app/ -name "*.c" -or -name "*.cpp" | xargs run-clang-tidy -quiet -p build/ -use-color 1 -fix

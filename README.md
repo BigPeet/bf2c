@@ -23,7 +23,7 @@ I used this project as motivation, justification and testbed for developing some
 
 ## How ...
 
-### ... install?
+### ... to install?
 
 Besides the usual system libraries (libc et al.), bf2c is a standalone executable.
 Simply download a [release](https://github.com/BigPeet/bf2c/releases) for your platform, put it where you want it and you are good to go.
@@ -40,7 +40,7 @@ bf2c hello.b -o hello.c
 echo ">+++++++++[<++++++++>-]<.+.>++++++++++." | bf2c
 
 # immediately compile and run the program
-echo ">+++++++++[<++++++++>-]<.+.>++++++++++." | bf2c | gcc -xc - && ./a.out
+echo ">+++++++++[<++++++++>-]<.+.>++++++++++." | bf2c -q | gcc -x c - && ./a.out
 
 # For more options, see "help"
 bf2c --help
