@@ -33,9 +33,16 @@ void bf2c_optimize(program_t* program, bf2c_optimization_level_t level)
     }
 }
 
-static bool is_io_command(command_type type)
+static bool is_io_command(command_type_t type)
 {
     return type == COMMAND_TYPE_IN || type == COMMAND_TYPE_OUT;
+}
+
+void bf2c_loop_unrolling(program_t* program)
+{
+    ABORT_IF(!program);
+    // Loops can be unrolled if the involved (control) cells contain known values or if the loop
+    // only sets the current cell to 0.
 }
 
 void bf2c_fold_constants(program_t* program)
@@ -52,6 +59,7 @@ void bf2c_fold_constants(program_t* program)
     // necessary, repeat).
 
     command_vec_t new_commands = command_vec_create();
+    (void) new_commands; // FIXME: Silence unused variable warning
 
     for (size_t i = 0; i < program->commands.size; ++i)
     {

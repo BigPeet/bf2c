@@ -17,5 +17,6 @@ void bf2c_optimize(program_t* program, bf2c_optimization_level_t level);
 void bf2c_fold_constants(program_t* program);
 void bf2c_remove_dead_code(program_t* program);
 void bf2c_remove_noop(program_t* program);
+void bf2c_loop_unrolling(program_t* program);
 
 #endif /* ifndef BF2C_OPTIMIZE_H_ */

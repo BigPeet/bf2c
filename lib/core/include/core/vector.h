@@ -36,7 +36,6 @@
 // TODO: Should there be a "contains" function for pointer equality (same object, not same value)?
 // TODO: Should clear use memset or just set size to 0?
 // TODO: Add "extend" functions
-// TODO: Add "copy" functions
 // TODO: Improve cmp_func situation...should the functions be optional?
 // TODO: Add "result-based" functions
 #define INTERNAL_VECTOR_DECLARE_FUNCTIONS(type_name, prefix, value_type, result_type)    \
