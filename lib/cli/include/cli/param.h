@@ -54,7 +54,7 @@ void cli_param_print_usage(cli_param_t const* param);
 void cli_param_print_value(cli_param_t const* param);
 
 // Utility functions
-bool cli_param_same_long_name(cli_param_t const* param, char const* name);
+bool cli_param_same_long_name(cli_param_t const* param, char const* name, size_t max_len);
 bool cli_param_same_short_name(cli_param_t const* param, char name);
 
 // Initialization / Setter functions

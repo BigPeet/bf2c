@@ -147,29 +147,58 @@ static cli_result_t cli_parse_param_arguments(cli_param_t* param, int* index, in
     return cli_param_set_value(param, argv[*index]);
 }
 
+static cli_result_t cli_apply_value_to_param(cli_param_t* param,
+                                             char const* argument,
+                                             int* index,
+                                             int argc,
+                                             char** argv,
+                                             char const* assigned)
+{
+    assert(param);
+
+    if (param->is_set_by_user)
+    {
+        // already set previously
+        return CLI_ERR(CLI_ERROR_DUPLICATE_PARAMETER, argument);
+    }
+    if (!param->arg_name)
+    {
+        // takes no arguments
+        // check if a value was assigned regardless
+        if (assigned && *assigned)
+        {
+            return CLI_ERR(CLI_ERROR_INVALID_ARGUMENT, argument);
+        }
+        // we treat this as a flag
+        return cli_param_enable_flag(param);
+    }
+    if (assigned)
+    {
+        return cli_param_set_value(param, assigned);
+    }
+    // parse arguments of parameter
+    return cli_parse_param_arguments(param, index, argc, argv);
+}
+
 static cli_result_t cli_parse_long_option(
     cli_t const* cli, char const* argument, int* index, int argc, char** argv)
 {
     assert(cli);
     assert(argument);
     assert(index);
+
+    char const* const assignment = strchr(argument, '=');
+    size_t const split           = (assignment != NULL) ? (size_t) (assignment - argument) : 0;
+    char const* const assigned   = (assignment != NULL) ? assignment + 1 : NULL;
+
     for (size_t j = 0; j < cli->parameters_len; ++j)
     {
-        if (!cli->parameters[j].is_positional &&
-            cli_param_same_long_name(&cli->parameters[j], argument))
+        cli_param_t* param = &cli->parameters[j];
+        assert(param);
+        if (!param->is_positional && cli_param_same_long_name(param, argument, split))
         {
-            if (cli->parameters[j].is_set_by_user)
-            {
-                // already set previously
-                return CLI_ERR(CLI_ERROR_DUPLICATE_PARAMETER, argument);
-            }
-            if (!cli->parameters[j].arg_name)
-            {
-                // takes no arguments, so treat this as a flag
-                return cli_param_enable_flag(&cli->parameters[j]);
-            }
-            // parse arguments of parameter
-            return cli_parse_param_arguments(&cli->parameters[j], index, argc, argv);
+            // We found the matching parameter.
+            return cli_apply_value_to_param(param, argument, index, argc, argv, assigned);
         }
     }
     return CLI_ERR(CLI_ERROR_UNKNOWN_PARAMETER, argv[*index]);
@@ -184,30 +213,25 @@ static cli_result_t cli_parse_short_options(
     cli_result_t parse_res = CLI_OK();
     while (*argument && parse_res.has_value)
     {
-        parse_res = CLI_ERR(CLI_ERROR_UNKNOWN_PARAMETER, argument);
+        // Treat the remainder (if any) as potential assigned value.
+        char const* const assigned = *(argument + 1) ? argument + 1 : NULL;
+        parse_res                  = CLI_ERR(CLI_ERROR_UNKNOWN_PARAMETER, argument);
         for (size_t j = 0; j < cli->parameters_len; ++j)
         {
-            if (!cli->parameters[j].is_positional &&
-                cli_param_same_short_name(&cli->parameters[j], *argument))
+            cli_param_t* param = &cli->parameters[j];
+            if (!param->is_positional && cli_param_same_short_name(param, *argument))
             {
-                if (cli->parameters[j].is_set_by_user)
+                // We found the matching parameter.
+                parse_res = cli_apply_value_to_param(param,
+                                                     argument,
+                                                     index,
+                                                     argc,
+                                                     argv,
+                                                     param->arg_name ? assigned : NULL);
+                if (assigned && param->arg_name)
                 {
-                    // already set previously
-                    return CLI_ERR(CLI_ERROR_DUPLICATE_PARAMETER, argument);
+                    return parse_res; // we've already consumed the remainder of the argument
                 }
-                if (cli->parameters[j].arg_name)
-                {
-                    // parameter expects an argument
-                    if (strlen(argument) > 1)
-                    {
-                        // parameter may not be directly followed by further short parameters
-                        return CLI_ERR(CLI_ERROR_INVALID_PARAMETER_SEQUENCE, argv[*index]);
-                    }
-                    return cli_parse_param_arguments(&cli->parameters[j], index, argc, argv);
-                }
-
-                // takes no arguments, so treat this as a flag
-                parse_res = cli_param_enable_flag(&cli->parameters[j]);
                 break; // out of the for loop
             }
         }
@@ -287,7 +311,7 @@ cli_param_t const* cli_try_get_param_by_name(cli_t const* cli, char const* name)
     {
         for (size_t i = 0; i < cli->parameters_len; ++i)
         {
-            if (cli_param_same_long_name(&cli->parameters[i], name))
+            if (cli_param_same_long_name(&cli->parameters[i], name, 0))
             {
                 return &cli->parameters[i];
             }
