@@ -69,10 +69,19 @@ int main(int argc, char* argv[])
         char const* input_file  = cli_param_get_string(cli_get_param_by_name(cli, "input"));
         char const* output_file = cli_param_get_string(cli_get_param_by_name(cli, "output"));
         char const* text        = cli_param_get_string(cli_get_param_by_name(cli, "text"));
+        if (input_file && text)
+        {
+            LOG_ERROR_MSG("Specified both an input file and a text string. "
+                          "Please specify only one of them.");
+            LOG_DEBUG("Input file: %s, Text: %s", input_file, text);
+            cli_print_usage(cli);
+            CLI_DEINIT();
+            return CLI_ERROR_INVALID_ARGUMENT;
+        }
+
         LOG_DEBUG("Input: %s", input_file ? input_file : text ? "text" : "stdin");
         LOG_DEBUG("Output: %s", output_file ? output_file : "stdout");
-        bool const uses_stdin = !input_file && !text;
-        if (uses_stdin)
+        if (!input_file && !text)
         {
             LOG_INFO_MSG("Reading from stdin. Press Ctrl+D to finish.");
         }
