@@ -184,10 +184,14 @@ void cli_param_destroy(cli_param_t* param)
 }
 
 
-bool cli_param_same_long_name(cli_param_t const* param, char const* name)
+bool cli_param_same_long_name(cli_param_t const* param, char const* name, size_t max_len)
 {
     ABORT_IF(!param || !name);
-    return param->long_name && strcmp(param->long_name, name) == 0;
+    if (max_len == 0)
+    {
+        return param->long_name && strcmp(param->long_name, name) == 0;
+    }
+    return param->long_name && strncmp(param->long_name, name, max_len) == 0;
 }
 
 bool cli_param_same_short_name(cli_param_t const* param, char name)

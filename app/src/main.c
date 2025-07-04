@@ -11,6 +11,12 @@
 #include "cli/result.h"
 #include "core/logging.h"
 
+#ifdef NDEBUG
+#define DEFAULT_LOG_LEVEL LOG_LEVEL_INFO
+#else
+#define DEFAULT_LOG_LEVEL LOG_LEVEL_DEBUG
+#endif
+
 CLI_SETUP(
     PROJECT_NAME,
     VERSION_MAJOR,
@@ -24,7 +30,7 @@ CLI_SETUP(
 
 int main(int argc, char* argv[])
 {
-    LOGGING_INIT(LOG_LEVEL_INFO);
+    LOGGING_INIT(DEFAULT_LOG_LEVEL);
     CLI_INIT(cli);
 
     { // scoped to minimize lifetime of variables
