@@ -57,6 +57,5 @@ cd bf2c
 cmake . -B build      # configure
 cmake --build build   # build
 cmake --install build # optional install step, likely requires sudo
+./build/app/bf2c -h   # execute the built binary
 ```
-
-The built executable should be located in the `./build/app` directory.
