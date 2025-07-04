@@ -203,6 +203,7 @@ bool cli_param_same_short_name(cli_param_t const* param, char name)
 cli_result_t cli_param_enable_flag(cli_param_t* param)
 {
     ABORT_IF(!param);
+    LOG_DEBUG("Enabling flag for argument '%s'.", param->long_name);
     if (param->value_type != BOOL)
     {
         return CLI_ERR(CLI_ERROR_INVALID_PARAMETER_TYPE, param->long_name);

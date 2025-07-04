@@ -213,30 +213,25 @@ static cli_result_t cli_parse_short_options(
     cli_result_t parse_res = CLI_OK();
     while (*argument && parse_res.has_value)
     {
-        parse_res = CLI_ERR(CLI_ERROR_UNKNOWN_PARAMETER, argument);
+        // Treat the remainder (if any) as potential assigned value.
+        char const* const assigned = *(argument + 1) ? argument + 1 : NULL;
+        parse_res                  = CLI_ERR(CLI_ERROR_UNKNOWN_PARAMETER, argument);
         for (size_t j = 0; j < cli->parameters_len; ++j)
         {
-            if (!cli->parameters[j].is_positional &&
-                cli_param_same_short_name(&cli->parameters[j], *argument))
+            cli_param_t* param = &cli->parameters[j];
+            if (!param->is_positional && cli_param_same_short_name(param, *argument))
             {
-                if (cli->parameters[j].is_set_by_user)
+                // We found the matching parameter.
+                parse_res = cli_apply_value_to_param(param,
+                                                     argument,
+                                                     index,
+                                                     argc,
+                                                     argv,
+                                                     param->arg_name ? assigned : NULL);
+                if (assigned && param->arg_name)
                 {
-                    // already set previously
-                    return CLI_ERR(CLI_ERROR_DUPLICATE_PARAMETER, argument);
+                    return parse_res; // we've already consumed the remainder of the argument
                 }
-                if (cli->parameters[j].arg_name)
-                {
-                    // parameter expects an argument
-                    if (strlen(argument) > 1)
-                    {
-                        // parameter may not be directly followed by further short parameters
-                        return CLI_ERR(CLI_ERROR_INVALID_PARAMETER_SEQUENCE, argv[*index]);
-                    }
-                    return cli_parse_param_arguments(&cli->parameters[j], index, argc, argv);
-                }
-
-                // takes no arguments, so treat this as a flag
-                parse_res = cli_param_enable_flag(&cli->parameters[j]);
                 break; // out of the for loop
             }
         }

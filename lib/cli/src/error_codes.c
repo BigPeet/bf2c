@@ -32,9 +32,6 @@ void cli_print_error(cli_error_t const* error)
         case CLI_ERROR_INVALID_PARAMETER_TYPE:
             msg = "Parameter was given or accessed with an invalid type";
             break;
-        case CLI_ERROR_INVALID_PARAMETER_SEQUENCE:
-            msg = "Parameter in an invalid sequence";
-            break;
         case CLI_ERROR_DUPLICATE_PARAMETER:
             msg = "Duplicate parameter encountered";
             break;
