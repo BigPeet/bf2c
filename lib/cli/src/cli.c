@@ -11,7 +11,15 @@
 static void cli_version_print(cli_version_t const* version)
 {
     assert(version);
+    // FIXME: single printf? or better yet: use a stringstream-like approach?
+    // I.e., build the string in memory, then print (and optionally consume) it.
+    // This would also allow to return the version string instead of printing it directly.
+    // Could be used throughout the library.
     printf("%d.%d.%d", version->major, version->minor, version->patch);
+    if (version->extra_info && *version->extra_info)
+    {
+        printf(" %s", version->extra_info);
+    }
 }
 
 void cli_print_usage(cli_t const* cli)

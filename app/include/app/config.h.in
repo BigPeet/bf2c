@@ -1,10 +1,24 @@
+// DO NOT MANUALLY EDIT THIS FILE!
+
 #ifndef APP_CONFIG_H_
 #define APP_CONFIG_H_
 
-// Configured options and settings via CMake
+// Options generated automatically via CMake.
 #define VERSION_MAJOR @bf2c_VERSION_MAJOR@
 #define VERSION_MINOR @bf2c_VERSION_MINOR@
 #define VERSION_PATCH @bf2c_VERSION_PATCH@
 #define PROJECT_NAME "@PROJECT_NAME@"
+#define DEFAULT_BUILD_TYPE "@DEFAULT_BUILD_TYPE@"
+#define BUILD_TYPE "@CMAKE_BUILD_TYPE@"
+#define IS_RELEASE_BUILD @IS_RELEASE_BUILD@
+#define BUILD_DATE "@BUILD_DATE@"
+#define GIT_HASH "@GIT_HASH@"
+#define GIT_REMOTE_URL "@GIT_REMOTE_URL@"
+
+#if IS_RELEASE_BUILD == 0
+#define EXTRA_VERSION_INFO "(" BUILD_DATE ", " BUILD_TYPE " build, " GIT_REMOTE_URL " " GIT_HASH ")"
+#else
+#define EXTRA_VERSION_INFO ""
+#endif
 
 #endif /* ifndef APP_CONFIG_H_ */

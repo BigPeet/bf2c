@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(bf2c VERSION 0.2.0)
+project(bf2c VERSION 0.3.0)
 
 # for correct library locations across platforms
 include(GNUInstallDirs)
@@ -7,18 +7,24 @@ include(GNUInstallDirs)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_STANDARD "99")
 set(CMAKE_C_STANDARD_REQUIRED ON)
+set(DEFAULT_BUILD_TYPE "Release")
 
 if (NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release")
+  set(CMAKE_BUILD_TYPE ${DEFAULT_BUILD_TYPE})
 endif()
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+  set(IS_RELEASE_BUILD 1)
+else()
+  set(IS_RELEASE_BUILD 0)
+endif()
+
+# get the current date and set it as a variable
+string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
 
 include(cmake/PreventInSourceBuilds.cmake)
+include(cmake/Git.cmake)
 
-
-# If build type is release then disable logging prefix
-if((NOT LOGGING_NO_PREFIX) AND (${CMAKE_BUILD_TYPE} STREQUAL "Release"))
-  set(LOGGING_NO_PREFIX ON)
-endif()
+option(LOGGING_NO_PREFIX "Logging without prefix" ${IS_RELEASE_BUILD})
 
 # Project specific definitions TODO: move into more suitable file
 if(${LOGGING_NO_PREFIX})

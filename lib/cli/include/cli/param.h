@@ -106,6 +106,7 @@ bool cli_param_get_bool_or(cli_param_t const* param, bool value);
 
 // TODO: implement "unchecked" functions which return the value without checking
 
+// FIXME: move macros into cli.h?
 
 // MACROs for convenience
 #define CLI_OPTION(name, short_form, param, type, default_val, desc)                        \

@@ -19,10 +19,8 @@
 
 CLI_SETUP(
     PROJECT_NAME,
-    VERSION_MAJOR,
-    VERSION_MINOR,
-    VERSION_PATCH,
     "A Brainfuck to C transpiler",
+    CLI_VERSION(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, EXTRA_VERSION_INFO),
     CLI_POSITIONAL_ARG("input", STRING, NULL, "\tInput file. Uses stdin, if not provided."),
     CLI_OPTION("output", 'o', "FILE", STRING, NULL, "\tOutput file. Uses stdout, if not provided."),
     CLI_OPTION("text", 't', "CODE", STRING, NULL, "\tInput Brainfuck code as a string."),
