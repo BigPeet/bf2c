@@ -51,7 +51,6 @@ cli_param_t const* cli_try_get_param_by_short_form(cli_t const* cli, char short_
 
 // User MACROS for setup and initialization
 #define CLI_VERSION(major_version, minor_version, patch_version, extra_information)   \
-    (cli_version_t)                                                                   \
     {                                                                                 \
         .major = (major_version), .minor = (minor_version), .patch = (patch_version), \
         .extra_info = (extra_information)                                             \
@@ -63,7 +62,7 @@ cli_param_t const* cli_try_get_param_by_short_form(cli_t const* cli, char short_
         static cli_param_t parameters[] = {__VA_ARGS__};                                                \
         static cli_t cli                = {.name           = (program_name),                            \
                                            .description    = (desc),                                    \
-                                           .version        = (program_version),                         \
+                                           .version        = program_version,                           \
                                            .parameters     = parameters,                                \
                                            .parameters_len = sizeof(parameters) / sizeof(cli_param_t)}; \
         return &cli;                                                                                    \
