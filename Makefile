@@ -14,6 +14,7 @@ else
 endif
 
 BUILD_TYPE := "Release"
+DEV_MODE := ""
 
 # If CC is not specified, it will be populated by make to "cc".
 # In that case, I want to use "clang" (if available) instead.
@@ -31,8 +32,14 @@ $(BINS): build
 
 debug: enable-debug configure $(BINS)
 
+dev: enable-dev-mode configure $(BINS)
+
 enable-debug:
 	$(eval BUILD_TYPE := "Debug")
+
+enable-dev-mode:
+	$(eval DEV_MODE := "ON")
+	$(eval BUILD_TYPE := "")
 
 release: all
 
@@ -40,6 +47,7 @@ configure:
 	@cmake -S . -B build/ -G $(GENERATOR) \
 		-DCMAKE_C_COMPILER=$(CC) \
 		-DCMAKE_CXX_COMPILER=$(CXX) \
+		-DDEV_MODE=$(DEV_MODE) \
 		-DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
 
 # technically, CMakeCache.txt or build.ninja would be a better indicator...

@@ -20,19 +20,16 @@ string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
 
 # Setup project options and flags
 setup_options()
+print_options()
+
+# Add interface library for various options
+add_library(project_options INTERFACE)
+set_project_options(project_options)
 
 # Add interface library for compiler warnings
 include(cmake/CompilerWarnings.cmake)
 add_library(project_warnings INTERFACE)
 set_project_warnings(project_warnings WARNINGS_AS_ERRORS "" "" "" "")
-
-# Add interface library for various options
-add_library(project_options INTERFACE)
-
-# Project specific definitions
-if(${LOGGING_NO_PREFIX})
-  target_compile_definitions(project_options INTERFACE LOGGING_NO_PREFIX=${LOGGING_NO_PREFIX})
-endif()
 
 # Sanitizers
 if(${ENABLE_SANITIZERS})

@@ -1,3 +1,24 @@
+function(print_options)
+  message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+  message(STATUS "Developer Mode: ${DEV_MODE}")
+  message(STATUS "Enable Tests: ${ENABLE_TESTS}")
+  message(STATUS "Enable Sanitizers: ${ENABLE_SANITIZERS}")
+  message(STATUS "Enable Undefined Behavior Sanitizer: ${ENABLE_SANITIZER_UNDEFINED_BEHAVIOR}")
+  message(STATUS "Enable Address Sanitizer: ${ENABLE_SANITIZER_ADDRESS}")
+  message(STATUS "Enable Leak Sanitizer: ${ENABLE_SANITIZER_LEAK}")
+  message(STATUS "Enable Thread Sanitizer: ${ENABLE_SANITIZER_THREAD}")
+  message(STATUS "Enable Memory Sanitizer: ${ENABLE_SANITIZER_MEMORY}")
+  message(STATUS "Logging without file prefix: ${LOGGING_NO_PREFIX}")
+endfunction()
+
+function(
+    set_project_options
+    project_name)
+  if(${LOGGING_NO_PREFIX})
+    target_compile_definitions(${project_name} INTERFACE LOGGING_NO_PREFIX=${LOGGING_NO_PREFIX})
+  endif()
+endfunction()
+
 macro(setup_options)
 
   # Dev Mode
@@ -16,6 +37,7 @@ macro(setup_options)
         set(CMAKE_BUILD_TYPE "Release")
       else()
         set(CMAKE_BUILD_TYPE ${DEFAULT_BUILD_TYPE})
+      endif()
     endif()
   endif()
 
@@ -28,9 +50,9 @@ macro(setup_options)
 
   # If build type is a release build, then disable logging prefix by default.
   if(${IS_RELEASE_BUILD})
-    option(LOGGING_NO_PREFIX "Log without file prefix" OFF)
-  else()
     option(LOGGING_NO_PREFIX "Log without file prefix" ON)
+  else()
+    option(LOGGING_NO_PREFIX "Log with file prefix" OFF)
   endif()
 
   # Sanitizers
