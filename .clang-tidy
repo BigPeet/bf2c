@@ -208,7 +208,7 @@ CheckOptions:
   - key: cppcoreguidelines-avoid-non-const-global-variables.AllowInternalLinkage
     value: false
   - key: readability-identifier-length.IgnoredVariableNames
-    value: 'a|b|c|i|j|k|x|y|z'
+    value: 'a|b|c|i|j|k|p|x|y|z'
   - key: readability-magic-numbers.IgnoredIntegerValues
     value: '0;1;2;3;4;10;100;255'
   - key: readability-magic-numbers.IgnorePowersOf2IntegerValues
