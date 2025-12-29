@@ -159,6 +159,8 @@ program_t bf2c_parse_file_by_name(char const* filename)
     return program;
 }
 
+// TODO: add result for program_t with parser errors as error type
+// OR return a result
 program_t bf2c_parse_text(char const* text)
 {
     token_vec_t tokens = bf2c_parse_tokens_from_text(text);

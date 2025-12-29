@@ -14,6 +14,7 @@ else
 endif
 
 BUILD_TYPE := "Release"
+BUILD_BINDINGS := "OFF"
 
 # If CC is not specified, it will be populated by make to "cc".
 # In that case, I want to use "clang" (if available) instead.
@@ -21,13 +22,18 @@ BUILD_TYPE := "Release"
 CC := $(or $(filter-out cc,$(CC)),$(COMPILER))
 CXX := $(or $(filter-out cc,$(CC)),$(COMPILER))
 
-.PHONY: all enable-debug debug release configure build install clean check-format format lint
+.PHONY: all bindings enable-bindings enable-debug debug release configure build install clean check-format format lint
 
-BINS := build/app/bf2c
+# Setup binary targets
+EXE := build/app/bf2c
+LIB := build/lib/bf2c/libbf2c_lib.a
+PY_BINDING := build/bindings/python/py_bf2c.so
+BINDINGS := $(PY_BINDING)
+BINS := $(EXE) $(LIB) $(BINDINGS)
 
 all: $(BINS)
 
-$(BINS): build
+$(BINS): enable-bindings build
 
 debug: enable-debug configure $(BINS)
 
@@ -36,11 +42,17 @@ enable-debug:
 
 release: all
 
+bindings: enable-bindings configure $(BINDINGS)
+
+enable-bindings:
+	$(eval BUILD_BINDINGS := "ON")
+
 configure:
 	@cmake -S . -B build/ -G $(GENERATOR) \
 		-DCMAKE_C_COMPILER=$(CC) \
 		-DCMAKE_CXX_COMPILER=$(CXX) \
-		-DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
+		-DCMAKE_BUILD_TYPE=$(BUILD_TYPE) \
+		-DBUILD_BINDINGS=$(BUILD_BINDINGS)
 
 # technically, CMakeCache.txt or build.ninja would be a better indicator...
 build/compile_commands.json: configure
@@ -59,14 +71,14 @@ clean:
 	@if [ -f a.out ]; then rm a.out; fi
 
 check-format:
-	@find lib/ app/ -name "*.c" -or -name "*.h" -or -name "*.cpp" | xargs clang-format --dry-run -Werror
+	@find lib/ app/ bindings/ -name "*.c" -or -name "*.h" -or -name "*.cpp" | xargs clang-format --dry-run -Werror
 	@echo "SUCCESS: No formatting errors found."
 
 format:
-	@find lib/ app/ -name "*.c" -or -name "*.h" -or -name "*.cpp" | xargs clang-format -i
+	@find lib/ app/ bindings/ -name "*.c" -or -name "*.h" -or -name "*.cpp" | xargs clang-format -i
 
 lint: build/compile_commands.json
-	@find lib/ app/ -name "*.c" -or -name "*.cpp" | xargs run-clang-tidy -quiet -p build/ -use-color 1
+	@find lib/ app/ bindings/ -name "*.c" -or -name "*.cpp" | xargs run-clang-tidy -quiet -p build/ -use-color 1
 
 fixes: build/compile_commands.json
-	@find lib/ app/ -name "*.c" -or -name "*.cpp" | xargs run-clang-tidy -quiet -p build/ -use-color 1 -fix
+	@find lib/ app/ bindings/ -name "*.c" -or -name "*.cpp" | xargs run-clang-tidy -quiet -p build/ -use-color 1 -fix
