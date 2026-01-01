@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+
 #include "bf2c/program.h"
 
 // TODO: return a RESULT for more precise error handling instead of bool

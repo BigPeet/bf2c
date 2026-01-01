@@ -4,12 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "bf2c/command.h"
 #include "bf2c/program.h"
 #include "core/vector.h"
 
-enum
-{
+enum {
     INDENT_WIDTH = 4,
     // used to store the command string
     // before writing it to the file
@@ -18,7 +18,7 @@ enum
     BUFFER_SIZE = 256
 };
 
-#define DBG_SIZE_VAL "31"
+#define DBG_SIZE_VAL  "31"
 #define DATA_SIZE_VAL "30000"
 
 static char const* const INCLUDES = "#include <stdio.h>\n\n";
@@ -44,10 +44,8 @@ static char const* const EPILOGUE   = "    /* PROGRAM END */\n"
                                       "    return 0;\n"
                                       "}\n";
 
-static bool bf2c_emit_preamble(FILE* file, program_t const* program)
-{
-    if (command_vec_contains(&program->commands, (command_t){.type = COMMAND_TYPE_DEBUG}))
-    {
+static bool bf2c_emit_preamble(FILE* file, program_t const* program) {
+    if (command_vec_contains(&program->commands, (command_t){.type = COMMAND_TYPE_DEBUG})) {
         return fprintf(file, "%s%s%s%s", INCLUDES, PREAMBLE, DEBUG_FUNC, MAIN_SETUP) >= 0;
     }
     if (command_vec_contains(&program->commands, (command_t){.type = COMMAND_TYPE_OUT}) ||
@@ -57,18 +55,17 @@ static bool bf2c_emit_preamble(FILE* file, program_t const* program)
     }
     return fprintf(file, "%s%s", PREAMBLE, MAIN_SETUP) >= 0;
 }
-static bool bf2c_emit_epilogue(FILE* file)
-{
+
+static bool bf2c_emit_epilogue(FILE* file) {
     return fprintf(file, "%s", EPILOGUE) >= 0;
 }
-static bool bf2c_emit_command(FILE* file, command_t command, int* indentation_level)
-{
+
+static bool bf2c_emit_command(FILE* file, command_t command, int* indentation_level) {
     assert(indentation_level);
     // TODO: improve buffer size handling
     char buffer[BUFFER_SIZE];
     int ret = 0;
-    switch (command.type)
-    {
+    switch (command.type) {
         // TODO: improve change value and ptr handling
         case COMMAND_TYPE_CHANGE_VAL:
             ret = snprintf(buffer,
@@ -76,8 +73,7 @@ static bool bf2c_emit_command(FILE* file, command_t command, int* indentation_le
                            "data[idx] %c= %d;",
                            command.value > 0 ? '+' : '-',
                            abs(command.value));
-            if (ret < 0 || ret >= BUFFER_SIZE)
-            {
+            if (ret < 0 || ret >= BUFFER_SIZE) {
                 return false;
             }
             break;
@@ -87,19 +83,14 @@ static bool bf2c_emit_command(FILE* file, command_t command, int* indentation_le
                            "idx %c= %d;",
                            command.value > 0 ? '+' : '-',
                            abs(command.value));
-            if (ret < 0 || ret >= BUFFER_SIZE)
-            {
+            if (ret < 0 || ret >= BUFFER_SIZE) {
                 return false;
             }
             break;
         // strcpy is fine here, because all the string literals are constant
         // and known to be shorter than the buffer size.
-        case COMMAND_TYPE_OUT:
-            strcpy(buffer, "printf(\"%c\", data[idx]);");
-            break;
-        case COMMAND_TYPE_IN:
-            strcpy(buffer, "(void) scanf(\"%c\", &data[idx]);");
-            break;
+        case COMMAND_TYPE_OUT: strcpy(buffer, "printf(\"%c\", data[idx]);"); break;
+        case COMMAND_TYPE_IN:  strcpy(buffer, "(void) scanf(\"%c\", &data[idx]);"); break;
         case COMMAND_TYPE_LOOP_START:
             strcpy(buffer, "while (data[idx]) {");
             ret = 1;
@@ -108,43 +99,33 @@ static bool bf2c_emit_command(FILE* file, command_t command, int* indentation_le
             strcpy(buffer, "}");
             --(*indentation_level);
             break;
-        case COMMAND_TYPE_DEBUG:
-            strcpy(buffer, "debug(data, idx);");
-            break;
-        case COMMAND_TYPE_UNKNOWN:
-            strcpy(buffer, "");
+        case COMMAND_TYPE_DEBUG:   strcpy(buffer, "debug(data, idx);"); break;
+        case COMMAND_TYPE_UNKNOWN: strcpy(buffer, "");
     }
     int const res = fprintf(file, "%*c%s\n", INDENT_WIDTH * *indentation_level, ' ', buffer) >= 0;
-    if (ret == 1)
-    {
+    if (ret == 1) {
         ++(*indentation_level);
     }
     return res;
 }
 
 // TODO: return a RESULT for more precise error handling instead of bool
-bool bf2c_emit_c_to_file(FILE* file, program_t const* program)
-{
-    if (!bf2c_emit_preamble(file, program))
-    {
+bool bf2c_emit_c_to_file(FILE* file, program_t const* program) {
+    if (!bf2c_emit_preamble(file, program)) {
         return false;
     }
     int indentation_level = 1;
-    VEC_FOR_EACH(command_t, cmd, program->commands)
-    {
-        if (!bf2c_emit_command(file, cmd, &indentation_level))
-        {
+    VEC_FOR_EACH (command_t, cmd, program->commands) {
+        if (!bf2c_emit_command(file, cmd, &indentation_level)) {
             return false;
         }
     }
     return bf2c_emit_epilogue(file);
 }
 
-bool bf2c_emit_c_to_filename(char const* filename, program_t const* program)
-{
+bool bf2c_emit_c_to_filename(char const* filename, program_t const* program) {
     FILE* file = fopen(filename, "w");
-    if (!file)
-    {
+    if (!file) {
         return false;
     }
     bool result = bf2c_emit_c_to_file(file, program);

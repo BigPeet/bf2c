@@ -1,2 +1,10 @@
 build/*
 bin/*
+
+dist/*
+*.egg-info
+
+*.o
+*.a
+*.so
+*.pyc

@@ -2,21 +2,20 @@
 #define CLI_CLI_H_
 
 #include <stddef.h>
+
 #include "cli/param.h"
 #include "cli/result.h"
 
 // cli_t: Struct and functions
 
-typedef struct cli_version_t
-{
+typedef struct cli_version_t {
     int major;
     int minor;
     int patch;
     char const* extra_info;
 } cli_version_t;
 
-typedef struct cli_t
-{
+typedef struct cli_t {
     cli_version_t version;
     char const* name;
     char const* description;
@@ -50,15 +49,14 @@ cli_param_t const* cli_try_get_param_by_index(cli_t const* cli, size_t index);
 cli_param_t const* cli_try_get_param_by_short_form(cli_t const* cli, char short_form);
 
 // User MACROS for setup and initialization
-#define CLI_VERSION(major_version, minor_version, patch_version, extra_information)   \
-    {                                                                                 \
-        .major = (major_version), .minor = (minor_version), .patch = (patch_version), \
-        .extra_info = (extra_information)                                             \
+#define CLI_VERSION(major_version, minor_version, patch_version, extra_information)                \
+    {                                                                                              \
+        .major = (major_version), .minor = (minor_version), .patch = (patch_version),              \
+        .extra_info = (extra_information)                                                          \
     }
 
 #define CLI_SETUP(program_name, desc, program_version, ...)                                             \
-    static cli_t* cli_gen_global_setup(void)                                                            \
-    {                                                                                                   \
+    static cli_t* cli_gen_global_setup(void) {                                                          \
         static cli_param_t parameters[] = {__VA_ARGS__};                                                \
         static cli_t cli                = {.name           = (program_name),                            \
                                            .description    = (desc),                                    \

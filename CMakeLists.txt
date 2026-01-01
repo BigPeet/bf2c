@@ -38,3 +38,4 @@ set_project_warnings(project_warnings WARNINGS_AS_ERRORS "" "" "" "")
 
 add_subdirectory(lib)
 add_subdirectory(app)
+add_subdirectory(bindings)

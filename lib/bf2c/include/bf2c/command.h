@@ -6,8 +6,7 @@
 #include "bf2c/token.h"
 #include "core/vector.h"
 
-typedef enum command_type_t
-{
+typedef enum command_type_t {
     COMMAND_TYPE_CHANGE_VAL,
     COMMAND_TYPE_CHANGE_PTR,
     COMMAND_TYPE_OUT,
@@ -18,8 +17,7 @@ typedef enum command_type_t
     COMMAND_TYPE_UNKNOWN,
 } command_type_t;
 
-typedef struct command_t
-{
+typedef struct command_t {
     int32_t value;
     command_type_t type;
 } command_t;
