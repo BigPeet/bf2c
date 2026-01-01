@@ -26,8 +26,7 @@ CLI_SETUP(
     CLI_OPTION("text", 't', "CODE", STRING, NULL, "\tInput Brainfuck code as a string."),
     COMMON_OPTIONS())
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
     LOGGING_INIT(DEFAULT_LOG_LEVEL);
     CLI_INIT(cli);
 
@@ -43,32 +42,23 @@ int main(int argc, char* argv[])
         }
     }
     // Apply verbosity settings
-    if (cli_param_get_bool(cli_get_param_by_name(cli, "verbose")))
-    {
+    if (cli_param_get_bool(cli_get_param_by_name(cli, "verbose"))) {
         LOGGING_SET(LOG_LEVEL_DEBUG);
-    }
-    else if (cli_param_get_bool(cli_get_param_by_name(cli, "quiet")))
-    {
+    } else if (cli_param_get_bool(cli_get_param_by_name(cli, "quiet"))) {
         LOGGING_SET(LOG_LEVEL_ERROR);
     }
 
     int return_value = 0;
     // TODO: how to improve? Do I want macros?
-    if (cli_param_get_bool(cli_get_param_by_name(cli, "help")))
-    {
+    if (cli_param_get_bool(cli_get_param_by_name(cli, "help"))) {
         cli_print_usage(cli);
-    }
-    else if (cli_param_get_bool(cli_get_param_by_name(cli, "version")))
-    {
+    } else if (cli_param_get_bool(cli_get_param_by_name(cli, "version"))) {
         cli_print_version(cli);
-    }
-    else
-    {
+    } else {
         char const* input_file  = cli_param_get_string(cli_get_param_by_name(cli, "input"));
         char const* output_file = cli_param_get_string(cli_get_param_by_name(cli, "output"));
         char const* text        = cli_param_get_string(cli_get_param_by_name(cli, "text"));
-        if (input_file && text)
-        {
+        if (input_file && text) {
             LOG_ERROR_MSG("Specified both an input file and a text string. "
                           "Please specify only one of them.");
             LOG_DEBUG("Input file: %s, Text: %s", input_file, text);
@@ -79,8 +69,7 @@ int main(int argc, char* argv[])
 
         LOG_DEBUG("Input: %s", input_file ? input_file : text ? "text" : "stdin");
         LOG_DEBUG("Output: %s", output_file ? output_file : "stdout");
-        if (!input_file && !text)
-        {
+        if (!input_file && !text) {
             LOG_INFO_MSG("Reading from stdin. Press Ctrl+D to finish.");
         }
         program_t prog = input_file ? bf2c_parse_file_by_name(input_file)

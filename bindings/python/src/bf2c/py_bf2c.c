@@ -1,18 +1,16 @@
-#include "Python.h"
+#include <Python.h>
 
 #include "bf2c/c_emitter.h"
 #include "bf2c/parser.h"
 
 // NOLINTBEGIN
 
-typedef struct py_program_t
-{
+typedef struct py_program_t {
     PyObject_HEAD;
     program_t program;
 } py_program_t;
 
-static void Program_dealloc(py_program_t* self)
-{
+static void Program_dealloc(py_program_t* self) {
     bf2c_program_destroy(&self->program);
     PyObject_Free(self);
 }
@@ -29,11 +27,9 @@ static PyTypeObject ProgramType = {
     // clang-format on
 };
 
-static py_program_t* Program_new(program_t program)
-{
+static py_program_t* Program_new(program_t program) {
     py_program_t* self = (py_program_t*) PyObject_New(py_program_t, &ProgramType);
-    if (!self)
-    {
+    if (!self) {
         PyErr_SetString(PyExc_MemoryError, "Failed to allocate memory for Program object.");
         return NULL;
     }
@@ -41,32 +37,26 @@ static py_program_t* Program_new(program_t program)
     return self;
 }
 
-static PyObject* parse_file(PyObject* self, PyObject* args)
-{
-    const char* file_path;
-    if (!PyArg_ParseTuple(args, "s", &file_path))
-    {
+static PyObject* parse_file(PyObject* self, PyObject* args) {
+    char const* file_path;
+    if (!PyArg_ParseTuple(args, "s", &file_path)) {
         return NULL;
     }
     // TODO: handle "no such file" error
     return (PyObject*) Program_new(bf2c_parse_file_by_name(file_path));
 }
 
-static PyObject* parse_text(PyObject* self, PyObject* args)
-{
-    const char* text;
-    if (!PyArg_ParseTuple(args, "s", &text))
-    {
+static PyObject* parse_text(PyObject* self, PyObject* args) {
+    char const* text;
+    if (!PyArg_ParseTuple(args, "s", &text)) {
         return NULL;
     }
     return (PyObject*) Program_new(bf2c_parse_text(text));
 }
 
-static PyObject* print_code(PyObject* self, PyObject* args)
-{
+static PyObject* print_code(PyObject* self, PyObject* args) {
     PyObject* program_obj;
-    if (!PyArg_ParseTuple(args, "O!", &ProgramType, &program_obj))
-    {
+    if (!PyArg_ParseTuple(args, "O!", &ProgramType, &program_obj)) {
         return NULL;
     }
     py_program_t* program = (py_program_t*) program_obj;
@@ -74,12 +64,10 @@ static PyObject* print_code(PyObject* self, PyObject* args)
     Py_RETURN_NONE;
 }
 
-static PyObject* emit_to_file(PyObject* self, PyObject* args)
-{
+static PyObject* emit_to_file(PyObject* self, PyObject* args) {
     char const* file_path;
     PyObject* program_obj;
-    if (!PyArg_ParseTuple(args, "O!s", &ProgramType, &program_obj, &file_path))
-    {
+    if (!PyArg_ParseTuple(args, "O!s", &ProgramType, &program_obj, &file_path)) {
         return NULL;
     }
     py_program_t* program = (py_program_t*) program_obj;
@@ -115,12 +103,10 @@ static struct PyModuleDef bf2cModule = {
     .m_methods = bf2cMethods,
 };
 
-PyMODINIT_FUNC PyInit_py_bf2c(void)
-{
+PyMODINIT_FUNC PyInit_py_bf2c(void) {
     // Check whether ProgramType is ready, but do not add it to the module.
     // It is intended as an opaque handle.
-    if (PyType_Ready(&ProgramType) < 0)
-    {
+    if (PyType_Ready(&ProgramType) < 0) {
         return NULL;
     }
     return PyModule_Create(&bf2cModule);

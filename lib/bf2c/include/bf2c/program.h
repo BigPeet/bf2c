@@ -2,10 +2,10 @@
 #define BF2C_PROGRAM_H_
 
 #include <stddef.h>
+
 #include "bf2c/command.h"
 
-typedef struct program_t
-{
+typedef struct program_t {
     command_vec_t commands;
 } program_t;
 

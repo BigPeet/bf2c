@@ -2,13 +2,13 @@
 #define CLI_PARAM_H_
 
 #include <stdbool.h>
+
 #include "cli/result.h"
 
 // forward declaration
 union cli_param_value_t;
 
-typedef union cli_param_value_t
-{
+typedef union cli_param_value_t {
     // NOLINTBEGIN(readability-identifier-naming)
     // Deviating from naming convention to match the naming of the types.
     // This is used in MACROs to initialize/select the correct value.
@@ -23,18 +23,14 @@ typedef union cli_param_value_t
     union cli_param_value_t* values;
 } cli_param_value_t;
 
-
-typedef enum cli_param_value_type_t
-{
+typedef enum cli_param_value_type_t {
     STRING,
     INT,
     DOUBLE,
     BOOL,
 } cli_param_value_type_t;
 
-
-typedef struct cli_param_t
-{
+typedef struct cli_param_t {
     cli_param_value_t contained;
     size_t values_len;
     char const* long_name;
@@ -43,10 +39,10 @@ typedef struct cli_param_t
     cli_param_value_type_t value_type;
     char short_name;
     // Using bitfields to pack the booleans into a single byte
-    bool uses_multiple_values : 1;    // this may change during parsing based on actual usage
-    bool may_use_multiple_values : 1; // this is a static property
-    bool is_positional : 1;           // this is a static property
-    bool is_set_by_user : 1;          // this may change during parsing based on actual usage
+    bool uses_multiple_values   : 1; // this may change during parsing based on actual usage
+    bool may_use_multiple_values: 1; // this is a static property
+    bool is_positional          : 1; // this is a static property
+    bool is_set_by_user         : 1; // this may change during parsing based on actual usage
 } cli_param_t;
 
 // Print functions
@@ -109,43 +105,43 @@ bool cli_param_get_bool_or(cli_param_t const* param, bool value);
 // FIXME: move macros into cli.h?
 
 // MACROs for convenience
-#define CLI_OPTION(name, short_form, param, type, default_val, desc)                        \
-    {                                                                                       \
-        .contained = {.type##_value = (default_val)}, .values_len = 1, .long_name = (name), \
-        .arg_name = (param), .description = (desc), .value_type = (type),                   \
-        .short_name = (short_form), .uses_multiple_values = false,                          \
-        .may_use_multiple_values = false, .is_positional = false, .is_set_by_user = false,  \
+#define CLI_OPTION(name, short_form, param, type, default_val, desc)                               \
+    {                                                                                              \
+        .contained = {.type##_value = (default_val)}, .values_len = 1, .long_name = (name),        \
+        .arg_name = (param), .description = (desc), .value_type = (type),                          \
+        .short_name = (short_form), .uses_multiple_values = false,                                 \
+        .may_use_multiple_values = false, .is_positional = false, .is_set_by_user = false,         \
     }
 
 #define CLI_FLAG(name, short_form, desc) CLI_OPTION(name, short_form, NULL, BOOL, false, desc)
 
-#define CLI_MULTI_OPTION(name, short_form, param, type, desc)                                     \
-    {                                                                                             \
-        .contained = {.values = NULL}, .values_len = 0, .long_name = (name), .arg_name = (param), \
-        .description = (desc), .value_type = (type), .short_name = (short_form),                  \
-        .uses_multiple_values = true, .may_use_multiple_values = true, .is_positional = false,    \
-        .is_set_by_user = false,                                                                  \
+#define CLI_MULTI_OPTION(name, short_form, param, type, desc)                                      \
+    {                                                                                              \
+        .contained = {.values = NULL}, .values_len = 0, .long_name = (name), .arg_name = (param),  \
+        .description = (desc), .value_type = (type), .short_name = (short_form),                   \
+        .uses_multiple_values = true, .may_use_multiple_values = true, .is_positional = false,     \
+        .is_set_by_user = false,                                                                   \
     }
 
-#define CLI_POSITIONAL_ARG(name, type, default_val, desc)                                       \
-    {                                                                                           \
-        .contained = {.type##_value = (default_val)}, .values_len = 1, .long_name = (name),     \
-        .arg_name = NULL, .description = (desc), .value_type = (type), .short_name = '\0',      \
-        .uses_multiple_values = false, .may_use_multiple_values = false, .is_positional = true, \
-        .is_set_by_user = false,                                                                \
+#define CLI_POSITIONAL_ARG(name, type, default_val, desc)                                          \
+    {                                                                                              \
+        .contained = {.type##_value = (default_val)}, .values_len = 1, .long_name = (name),        \
+        .arg_name = NULL, .description = (desc), .value_type = (type), .short_name = '\0',         \
+        .uses_multiple_values = false, .may_use_multiple_values = false, .is_positional = true,    \
+        .is_set_by_user = false,                                                                   \
     }
 
-#define CLI_POSITIONAL_MULTI_ARG(name, type, desc)                                             \
-    {                                                                                          \
-        .contained = {.values = NULL}, .values_len = 0, .long_name = (name), .arg_name = NULL, \
-        .description = (desc), .value_type = (type), .short_name = '\0',                       \
-        .uses_multiple_values = true, .may_use_multiple_values = true, .is_positional = true,  \
-        .is_set_by_user = false,                                                               \
+#define CLI_POSITIONAL_MULTI_ARG(name, type, desc)                                                 \
+    {                                                                                              \
+        .contained = {.values = NULL}, .values_len = 0, .long_name = (name), .arg_name = NULL,     \
+        .description = (desc), .value_type = (type), .short_name = '\0',                           \
+        .uses_multiple_values = true, .may_use_multiple_values = true, .is_positional = true,      \
+        .is_set_by_user = false,                                                                   \
     }
 
-#define COMMON_OPTIONS()                                                                    \
-    CLI_FLAG("verbose", 'v', "\t\tVerbose mode"), CLI_FLAG("quiet", 'q', "\t\tQuiet mode"), \
-        CLI_FLAG("help", 'h', "\t\tPrint this help message."),                              \
+#define COMMON_OPTIONS()                                                                           \
+    CLI_FLAG("verbose", 'v', "\t\tVerbose mode"), CLI_FLAG("quiet", 'q', "\t\tQuiet mode"),        \
+        CLI_FLAG("help", 'h', "\t\tPrint this help message."),                                     \
         CLI_FLAG("version", 'V', "\t\tPrint version.")
 
 

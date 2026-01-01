@@ -1,8 +1,7 @@
 #ifndef BF2C_TOKEN_H_
 #define BF2C_TOKEN_H_
 
-typedef enum token_type_t
-{
+typedef enum token_type_t {
     TOKEN_PLUS,
     TOKEN_MINUS,
     TOKEN_LEFT,
