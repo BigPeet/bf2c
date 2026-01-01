@@ -17,6 +17,10 @@ endif
 BUILD_TYPE ?= "Release"
 BUILD_DIR ?= build
 
+# Default clang-format/-tidy binaries/wrappers
+CLANG_FORMAT ?= clang-format-18
+CLANG_TIDY ?= run-clang-tidy-18
+
 # If CC is not specified, it will be populated by make to "cc".
 # In that case, I want to use "clang" (if available) instead.
 # But if it is user-specified, keep it as-is.
@@ -104,17 +108,17 @@ clean-build:
 # Formatting and linting
 .PHONY: check-format
 check-format:
-	@clang-format --dry-run -Werror $(SRC_FILES) $(HEADER_FILES)
+	@$(CLANG_FORMAT) --dry-run -Werror $(SRC_FILES) $(HEADER_FILES)
 	@echo "SUCCESS: No formatting errors found."
 
 .PHONY: format
 format:
-	@clang-format -i $(SRC_FILES) $(HEADER_FILES)
+	@$(CLANG_FORMAT) -i $(SRC_FILES) $(HEADER_FILES)
 
 .PHONY: lint
 lint: ${CONFIGURED}
-	@run-clang-tidy -quiet -p build/ -use-color 1 $(SRC_FILES)
+	@$(CLANG_TIDY) -quiet -p build/ -use-color 1 $(SRC_FILES)
 
 .PHONY: fixes
 fixes: ${CONFIGURED}
-	@run-clang-tidy -quiet -p build/ -use-color 1 -fix $(SRC_FILES)
+	@$(CLANG_TIDY) -quiet -p build/ -use-color 1 -fix $(SRC_FILES)
