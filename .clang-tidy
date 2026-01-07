@@ -1,10 +1,14 @@
 ---
+
+# for clang-tidy-18
+
 Checks:
   - -*
   # clang diagnstic and analyzer
   - clang-diagnostic-*
   - clang-analyzer-*
   - -clang-analyzer-deadcode.DeadStores
+  # abseil, altera, android, boost are disabled completely
   # bugprone
   - bugprone-*
   - -bugprone-argument-comment
@@ -14,21 +18,19 @@ Checks:
   - -bugprone-unchecked-optional-access
   # cert
   - cert-*
+  # concurrenty disabled completely
   # cppcoreguidelines
   - cppcoreguidelines-*
   - -cppcoreguidelines-owning-memory
+  # darwin, fuchsia disabled completely
   # google
-  - google-build-namespaces
-  - google-build-using-namespace
-  - google-default-arguments
-  - google-explicit-constructor
-  - google-global-names-in-headers
-  - google-readability-casting
-  - google-runtime-int
-  - google-runtime-operator
+  - google-*
+  - -google-objc-*
+  - -google-readability-todo
   # hicpp
   - hicpp-*
-  # llvm
+  # linuxkernel disabled completely
+  # llvm (only this one)
   - llvm-namespace-comment
   # misc
   - misc-*
@@ -36,6 +38,7 @@ Checks:
   - modernize-*
   - -modernize-use-trailing-return-type
   - -modernize-replace-disallow-copy-and-assign-macro
+  # mpi, objc, openmp disabled completely
   # performance
   - performance-*
   # portability
@@ -46,6 +49,7 @@ Checks:
   - -readability-function-cognitive-complexity
   - -readability-static-accessed-through-instance
   - -readability-uppercase-literal-suffix
+  # zircon disabled completely
   # Deactivate Aliases (only activate canonical names)
   - -cert-arr39-c
   - -cert-con36-c
@@ -54,22 +58,35 @@ Checks:
   - -cert-dcl03-c
   - -cert-dcl16-c
   - -cert-dcl37-c
+  # - -cert-dcl50-cpp # not an alias with clang-tidy-18 yet
   - -cert-dcl51-cpp
   - -cert-dcl54-cpp
+  # - -cert-dcl58-cpp # not an alias with clang-tidy-18 yet
   - -cert-dcl59-cpp
+  # - -cert-env33-c # not an alias with clang-tidy-18 yet
   - -cert-err09-cpp
+  # - -cert-err34-c # not an alias with clang-tidy-18 yet
+  # - -cert-err52-cpp # not an alias with clang-tidy-18 yet
+  # - -cert-err58-cpp # not an alias with clang-tidy-18 yet
+  # - -cert-err60-cpp # not an alias with clang-tidy-18 yet
   - -cert-err61-cpp
   - -cert-exp42-c
   - -cert-fio38-c
+  # - -cert-flp30-c # not an alias with clang-tidy-18 yet
   - -cert-flp37-c
   - -cert-int09-c
+  # - -cert-mem57-cpp # not an alias with clang-tidy-18 yet
   - -cert-msc24-c
   - -cert-msc30-c
   - -cert-msc32-c
   - -cert-msc33-c
+  # - -cert-msc50-cpp # not an alias with clang-tidy-18 yet
+  # - -cert-msc51-cpp # not an alias with clang-tidy-18 yet
   - -cert-msc54-cpp
   - -cert-oop11-cpp
   - -cert-oop54-cpp
+  # - -cert-oop57-cpp # not an alias with clang-tidy-18 yet
+  # - -cert-oop58-cpp # not an alias with clang-tidy-18 yet
   - -cert-pos44-c
   - -cert-pos47-c
   - -cert-sig30-c
@@ -85,7 +102,11 @@ Checks:
   - -cppcoreguidelines-noexcept-swap
   - -cppcoreguidelines-non-private-member-variables-in-classes
   - -cppcoreguidelines-use-default-member-init
+  # - -fuchsia-header-anon-namespaces # not an alias with clang-tidy-18 yet
+  # - -fuchsia-multiple-inheritance # not an alias with clang-tidy-18 yet
+  # - -google-build-namespaces # not an alias with clang-tidy-18 yet
   - -google-readability-braces-around-statements
+  # - -google-readability-casting # not an alias with clang-tidy-18 yet
   - -google-readability-function-size
   - -google-readability-namespace-comments
   - -hicpp-avoid-c-arrays
@@ -114,8 +135,8 @@ Checks:
   - -hicpp-use-nullptr
   - -hicpp-use-override
   - -hicpp-vararg
-  # Disabled for C
-  # - -cppcoreguidelines-pro-type-union-access
+  - -llvm-else-after-return
+  - -llvm-qualified-auto
 
 # clang-analyzer checks are not always reliable.
 WarningsAsErrors: '*,-clang-analyzer-*'
